@@ -2,6 +2,18 @@ from flask import Flask, render_template
 
 app = Flask(__name__)
 
+class User:
+    def __init__(self, fn, ln):
+        self.fname = fn
+        self.lname = ln
+
+class Employee(User):
+    def __init__(self, fn, ln, uname, t):
+        self.fname = fn
+        self.lname = ln
+        self.username = uname
+        self.type = t
+
 @app.route('/')
 def index():
     return render_template('index.html')
@@ -16,7 +28,7 @@ def register():
 
 @app.route('/waiter_dashboard')
 def waiter_dash():
-    return render_template('waiter_dashboard.html')
+    return render_template('waiter_dashboard.html', user=user, bookedtables=[0,1,5])
 
 @app.route('/customer_dashboard')
 def cust_dash():
