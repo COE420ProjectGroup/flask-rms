@@ -26,5 +26,9 @@ def cust_dash():
 def chef_dash():
     return render_template('chef_dashboard.html')
 
+@app.route('/logout')
+def logout():
+    pass
+
 if(__name__) == '__main__':
     app.run(debug=True)
