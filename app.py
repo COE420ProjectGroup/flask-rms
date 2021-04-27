@@ -9,8 +9,7 @@ class User:
 
 class Employee(User):
     def __init__(self, fn, ln, uname, t):
-        self.fname = fn
-        self.lname = ln
+        super().__init__(self, fn, ln)
         self.username = uname
         self.type = t
 
