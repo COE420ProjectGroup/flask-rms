@@ -12,22 +12,22 @@ Login
             <div class="card-title h4 text-center">Enter Name</div>
             <div class="card-title text-center">to get started with your order.</div>
             <hr>
-            <form action="{{ url_for('register') }}">
+            <form action="{{ url_for('register') }}" method="POST">
                 <div class="row py-2">
                     <div class="col-md">
                         <label for="firstName" class="form-label">First name</label>
-                        <input type="text" class="form-control" id="firstName" placeholder="Muhammad" required>
+                        <input type="text" class="form-control" id="firstName" placeholder="Muhammad" name="fname" required>
                     </div>
                     <div class="col-md">
                         <label for="lastName" class="form-label">Last name</label>
-                        <input type="text" class="form-control" id="lastName" placeholder="Ali" required>
+                        <input type="text" class="form-control" id="lastName" placeholder="Ali" name="lname" required>
                     </div>
                 </div>
 
                 <!-- FAM is family table / SML is small table, 2 is table number, 6 is number of seats on the table -->
                 <div class="row d-flex justify-content-center text-center py-2">
                     <label for="tableCode" class="form-label">Table Code</label>
-                    <input type="text" class="form-control w-50 text-center" id="tableCode" placeholder="FAM26"
+                    <input type="text" class="form-control w-50 text-center" id="tableCode" placeholder="FAM26" name="tcode"
                         minlength="5" maxlength="5" required>
                 </div>
 

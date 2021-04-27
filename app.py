@@ -16,6 +16,13 @@ class Employee(User):
 		self.username = uname
 		self.type = t
 
+class Customer(User):
+	def __init__(self, fn, ln, tcode, custID):
+		super().__init__(fn, ln)
+		self.tcode = tcode
+		self.type = 3
+		self.custID = custID
+
 sessions = {}
 
 
@@ -27,15 +34,28 @@ def index():
 
 @app.route("/customer")
 def customer():
-	custId = 0
+	global sessions
+	if 'sessionID' in request.cookies:
+		s = request.cookies['sessionID']
+		if s in sessions:
+			if sessions[s].type == 3:
+				cust = sessions[s]
+			else:
+				return redirect(url_for('register'))
+		else: # invalid sessionID cookie
+			resp = redirect(url_for('register'))
+			resp.set_cookie('sessionID', '', expires=0)
+			return resp
+	else:
+		return redirect(url_for('register'))
 	connection = cx_Oracle.connect("b00079866/b00079866@coeoracle.aus.edu:1521/orcl")
 	cur = connection.cursor()
-	res = cur.execute("select rorders.ordernum, name, qty, addinfo from rorders, rorderdetails, rmenu where rorders.ordernum=rorderdetails.ordernum AND rorderdetails.itemid=rmenu.itemid AND custID="+str(custId) + " order by rorders.ordernum")
+	res = cur.execute("select rorders.ordernum, name, qty, addinfo from rorders, rorderdetails, rmenu where rorders.ordernum=rorderdetails.ordernum AND rorderdetails.itemid=rmenu.itemid AND custID="+str(cust.custID) + " order by rorders.ordernum")
 	res = [row for row in res]
 	ord = {}
 	for row in res:
 		ord.setdefault(row[0],[]).append(row)
-	return render_template("customer_dashboard.html", orders=ord)
+	return render_template("customer_dashboard.html", user=cust, orders=ord)
 
 
 
@@ -45,7 +65,10 @@ def dashboard():
 	if 'sessionID' in request.cookies:
 		s = request.cookies['sessionID']
 		if s in sessions:
-			emp = sessions[s]
+			if sessions[s].type != 3:
+				emp = sessions[s]
+			else:
+				return redirect(url_for('login'))
 		else: # invalid sessionID cookie
 			resp = redirect(url_for('login'))
 			resp.set_cookie('sessionID', '', expires=0)
@@ -71,7 +94,10 @@ def login():
 		if 'sessionID' in request.cookies:
 			s = request.cookies['sessionID']
 			if s in sessions:
-				return redirect(url_for('dashboard'))
+				if sessions[s].type != 3:
+					return redirect(url_for('dashboard'))
+				else:
+					return render_template("login.html")
 			else: # invalid sessionID cookie
 				resp = make_response(render_template("login.html"))
 				resp.set_cookie('sessionID', '', expires=0)
@@ -104,6 +130,39 @@ def logout():
 	resp.set_cookie('sessionID', '', expires=0)
 	return resp
 
-@app.route('/register')
+@app.route('/register', methods = ['GET', 'POST'])
 def register():
-    return render_template('customer_registration.html')
+	if request.method == 'GET':
+		if 'sessionID' in request.cookies:
+			s = request.cookies['sessionID']
+			if s in sessions:
+				if sessions[s].type == 3:
+					return redirect(url_for('customer'))
+				else:
+					return render_template('customer_registration.html')
+			else: # invalid sessionID cookie
+				resp = make_response(render_template("customer_registration.html"))
+				resp.set_cookie('sessionID', '', expires=0)
+				return resp
+		else:
+			return render_template('customer_registration.html')
+	# else POST
+	fname = request.form['fname']
+	lname = request.form['lname']
+	tcode = request.form['tcode']
+	connection = cx_Oracle.connect("b00079866/b00079866@coeoracle.aus.edu:1521/orcl")
+	cur = connection.cursor()
+	res = cur.execute("select max(custID) from rcustomer")
+	custID = int(list(res)[0][0]) + 1 # incr custID
+
+	cur = connection.cursor()
+	res = cur.execute("insert into rcustomer (custID, tablecode, fname, lname, paymentRequested) values ({},'{}','{}','{}',0)".format(custID,tcode, fname, lname))
+	connection.commit()
+	print(res)
+	cust = Customer(fname, lname, tcode, custID)
+	sessID = sha256(cust.fname.encode() + urandom(16)).hexdigest()
+	sessions[sessID] = cust
+	print(sessions)
+	resp = redirect(url_for('customer'))
+	resp.set_cookie('sessionID', sessID)
+	return resp
