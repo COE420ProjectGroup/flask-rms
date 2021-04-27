@@ -18,7 +18,7 @@ def register():
 def waiter_dash():
     return render_template('waiter_dashboard.html')
 
-@app.route('/sustomer_dashboard')
+@app.route('/customer_dashboard')
 def cust_dash():
     return render_template('customer_dashboard.html')
 
