@@ -126,6 +126,11 @@ def login():
 
 @app.route("/logout", methods = ['GET'])
 def logout():
+	global sessions
+	if 'sessionID' in request.cookies:
+			s = request.cookies['sessionID']
+			if s in sessions:
+				sessions.pop(s)
 	resp = redirect(url_for('index'))
 	resp.set_cookie('sessionID', '', expires=0)
 	return resp
