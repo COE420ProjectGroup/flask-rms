@@ -34,7 +34,16 @@ class Customer(User):
 		self.type = 3
 		self.custID = custID
 
-
+class MenuItem:
+	def __init__(self, i, nm, dsc, pr, t, a):
+		self.id = i
+		self.name = nm
+		self.desc = dsc
+		self.price = pr
+		self.type = t
+		self.avail = a
+	def __repr__(self):
+		return f'Menu({self.name}, {self.desc}, {self.price}, {self.type}, {self.avail})'
 
 
 @app.route("/")
@@ -59,12 +68,15 @@ def customer():
 		return redirect(url_for('register'))
 	connection = cx_Oracle.connect("b00079866/b00079866@coeoracle.aus.edu:1521/orcl")
 	cur = connection.cursor()
+	res = cur.execute("select * from rmenu order by type desc")
+	items = [MenuItem(*i) for i in res]
+	#print(items)
 	res = cur.execute("select rorders.ordernum, name, qty, addinfo from rorders, rorderdetails, rmenu where rorders.ordernum=rorderdetails.ordernum AND rorderdetails.itemid=rmenu.itemid AND custID="+str(cust.custID) + " order by rorders.ordernum")
 	res = [row for row in res]
 	ord = {}
 	for row in res:
 		ord.setdefault(row[0],[]).append(row)
-	return render_template("customer_dashboard.html", user=cust, orders=ord)
+	return render_template("customer_dashboard.html", user=cust, orders=ord, menu=items)
 
 
 
