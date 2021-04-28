@@ -40,11 +40,11 @@
                                             elit.
                                             Hic, possimus.</p>
                                         <div class="list-group list-group-horizontal">
-                                            <a onclick="dec('m1');"
+                                            <a onclick="dec('s0');"
                                                 class="list-group-item list-group-item-action bg-danger text-white text-center">-</a>
-                                            <a class="list-group-item" id="m1">0</a>
+                                            <a class="list-group-item" id="s0">0</a>
                                             <a class="list-group-item list-group-item-action text-center active"
-                                                onclick="inc('m1');">+</a>
+                                                onclick="inc('s0');">+</a>
                                         </div>
                                     </div>
                                 </div>
@@ -56,10 +56,10 @@
                                             elit.
                                             Hic, possimus.</p>
                                         <div class="list-group list-group-horizontal">
-                                            <a onclick="dec('m2');"
+                                            <a onclick="dec('s1');"
                                                 class="list-group-item list-group-item-action bg-danger text-white text-center">-</a>
-                                            <a id="m2" class="list-group-item">0</a>
-                                            <a onclick="inc('m2');"
+                                            <a id="s1" class="list-group-item">0</a>
+                                            <a onclick="inc('s1');"
                                                 class="list-group-item list-group-item-action text-center active">+</a>
                                         </div>
                                     </div>
@@ -72,10 +72,10 @@
                                             elit.
                                             Hic, possimus.</p>
                                         <div class="list-group list-group-horizontal">
-                                            <a onclick="dec('m3');"
+                                            <a onclick="dec('s2');"
                                                 class="list-group-item list-group-item-action bg-danger text-white text-center">-</a>
-                                            <a id="m3" class="list-group-item">0</a>
-                                            <a onclick="inc('m3');"
+                                            <a id="s2" class="list-group-item">0</a>
+                                            <a onclick="inc('s2');"
                                                 class="list-group-item list-group-item-action text-center active">+</a>
                                         </div>
                                     </div>
@@ -96,10 +96,10 @@
                                             elit.
                                             Hic, possimus.</p>
                                         <div class="list-group list-group-horizontal">
-                                            <a onclick="dec('m4');"
+                                            <a onclick="dec('m3');"
                                                 class="list-group-item list-group-item-action bg-danger text-white text-center">-</a>
-                                            <a id="m4" class="list-group-item">0</a>
-                                            <a onclick="inc('m4');"
+                                            <a id="m3" class="list-group-item">0</a>
+                                            <a onclick="inc('m3');"
                                                 class="list-group-item list-group-item-action text-center active">+</a>
                                         </div>
                                     </div>
@@ -112,10 +112,10 @@
                                             elit.
                                             Hic, possimus.</p>
                                         <div class="list-group list-group-horizontal">
-                                            <a onclick="dec('m5');"
+                                            <a onclick="dec('m4');"
                                                 class="list-group-item list-group-item-action bg-danger text-white text-center">-</a>
-                                            <a id="m5" class="list-group-item">0</a>
-                                            <a onclick="inc('m5');"
+                                            <a id="m4" class="list-group-item">0</a>
+                                            <a onclick="inc('m4');"
                                                 class="list-group-item list-group-item-action text-center active">+</a>
                                         </div>
                                     </div>
@@ -128,16 +128,20 @@
                                             elit.
                                             Hic, possimus.</p>
                                         <div class="list-group list-group-horizontal">
-                                            <a onclick="dec('m6');"
+                                            <a onclick="dec('m5');"
                                                 class="list-group-item list-group-item-action bg-danger text-white text-center">-</a>
-                                            <a id="m6" class="list-group-item">0</a>
-                                            <a onclick="inc('m6');"
+                                            <a id="m5" class="list-group-item">0</a>
+                                            <a onclick="inc('m5');"
                                                 class="list-group-item list-group-item-action text-center active">+</a>
                                         </div>
                                     </div>
-                                </div>
+                                </div>                               
                             </div>
                         </div>
+                    </div>
+                    <br>
+                    <div style="text-align: center;">
+                        <a class="btn btn-primary w-50" onclick="placeOrder();">Place Order</a>
                     </div>
                 </div>
             </div>
@@ -152,7 +156,7 @@
                         <li>Chicken</li>
                         <li>Pasta</li>
                     </ul>
-                    <strong class="card-footer">Pending</strong>
+                    <strong class="card-footer">Preparing</strong>
                 </div>
                 <div class="card bg-primary text-light p-3">
                     <strong class="card-title">Order 1</strong>
@@ -183,6 +187,36 @@
     function dec(id) {
         var qty = parseInt(document.getElementById(id).innerHTML);
         document.getElementById(id).innerHTML = (qty == 0) ? 0 : qty - 1;
+    }
+
+    function placeOrder() {
+        var xhr = new XMLHttpRequest();
+        var data = {};
+        var i = 0;
+        while (true) {
+            var ele = document.getElementById("m"+i);
+            if(ele){
+                data["m"+i] = ele.innerHTML;
+            }
+            else{
+                ele = document.getElementById("s"+i);
+                if(ele){
+                    data["s"+i] = ele.innerHTML;
+                }
+                else {
+                    break;
+                }
+            }
+            i = i+1;
+        }
+        
+        xhr.open("POST", "/place", true);
+        xhr.setRequestHeader('Content-Type', 'application/json');
+        xhr.send(JSON.stringify(data));
+        if (xhr.readyState == XMLHttpRequest.DONE) {
+            console.log(xhr.responseText);
+        }
+        console.log(xhr.responseText);
     }
 </script>
 {% endblock content %}
