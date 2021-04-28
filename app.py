@@ -2,8 +2,19 @@ from flask import render_template, Flask, request, redirect, url_for, make_respo
 from hashlib import md5, sha256
 import cx_Oracle
 from os import urandom
+from datetime import datetime as dt
 
+sessions = {}
+app = Flask(__name__)
 
+def getType(ck):
+	global sessions
+	if 'sessionID' not in ck.keys():
+		return -1
+	if ck['sessionID'] not in sessions.keys():
+		return -1
+	return sessions[ck['sessionID']].type
+	
 
 class User:
 	def __init__(self, fn, ln):
@@ -23,10 +34,8 @@ class Customer(User):
 		self.type = 3
 		self.custID = custID
 
-sessions = {}
 
 
-app = Flask(__name__)
 
 @app.route("/")
 def index():
@@ -171,3 +180,29 @@ def register():
 	resp = redirect(url_for('customer'))
 	resp.set_cookie('sessionID', sessID)
 	return resp
+
+
+@app.route("/place", methods = ['POST'])
+def place():
+	global sessions
+	if getType(request.cookies) != 3:
+		return redirect(url_for('index'))
+	custID = sessions[request.cookies['sessionID']].custID
+	connection = cx_Oracle.connect("b00079866/b00079866@coeoracle.aus.edu:1521/orcl")
+	cur = connection.cursor()
+	res = cur.execute("select max(orderNum) from rorders")
+	ordnum = int(list(res)[0][0]) + 1 # incr ordNum
+	cur = connection.cursor()
+	n = dt.now()
+	res = cur.execute(f"insert into rorders (orderNum, custID, o_date, placed, prepared, delivered) values ({ordnum},{custID},TO_DATE('{n.day}/{n.month}/{n.year} {n.hour}:{n.minute}:{n.second}', 'dd/mm/yy hh24:mi:ss'), 1, 0, 0)")
+	connection.commit()
+
+	for itemID, qty in request.json.items():
+		if qty != '0':
+			cur = connection.cursor()
+			#print(f"insert into rorderDetails values ({ordnum},{itemID[1:]},{qty},NULL)")
+			res = cur.execute(f"insert into rorderDetails values ({ordnum},{itemID[1:]},{qty},NULL)")
+			connection.commit()
+
+	#print(request.json, request.cookies)
+	return 'success'
