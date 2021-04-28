@@ -20,10 +20,10 @@
     <div class="flex-grow-1 tab-content p-md-5 bg-light">
         <section class="tab-pane active in" role="tabpanel" id="featured">
             <div class="row">
-                <img src="{{ url_for('static', filename='images/menu.jpg') }}" alt="" class="d-none d-xl-block col-xl-4">
+                <!-- <img src="{{ url_for('static', filename='images/menu.jpg') }}" alt="" class="d-none d-xl-block col-xl-4"> -->
 
-                <div class="col-xl-8 p-5">
-                    <h3>Featured Dishes</h3>
+                <div class="p-5">
+                    <h3>Menu</h3>
                     <p>
                         Lorem, ipsum dolor sit amet consectetur adipisicing elit. Voluptate fugit expedita minima,
                         aperiam error ut.
@@ -39,12 +39,12 @@
                                         <p class="card-text">Lorem ipsum dolor sit amet consectetur adipisicing
                                             elit.
                                             Hic, possimus.</p>
-                                        <div class="list-group list-group-horizontal">
-                                            <a onclick="dec('s0');"
-                                                class="list-group-item list-group-item-action bg-danger text-white text-center">-</a>
-                                            <a class="list-group-item" id="s0">0</a>
-                                            <a class="list-group-item list-group-item-action text-center active"
-                                                onclick="inc('s0');">+</a>
+                                        <div class="btn-group w-100" role="group">
+                                            <a onclick="dec('s0');" type="button"
+                                                class="btn btn-danger text-light" type="button"><span class="material-icons">remove</span></a>
+                                            <a class="btn p-0 fs-3" id="s0">0</a>
+                                            <a class="btn btn-primary text-light" type="button"
+                                                onclick="inc('s0');"><span class="material-icons">add</span></a>
                                         </div>
                                     </div>
                                 </div>
@@ -55,12 +55,12 @@
                                         <p class="card-text">Lorem ipsum dolor sit amet consectetur adipisicing
                                             elit.
                                             Hic, possimus.</p>
-                                        <div class="list-group list-group-horizontal">
+                                        <div class="btn-group w-100" role="group">
                                             <a onclick="dec('s1');"
-                                                class="list-group-item list-group-item-action bg-danger text-white text-center">-</a>
-                                            <a id="s1" class="list-group-item">0</a>
+                                                class="btn btn-danger text-light" type="button"><span class="material-icons">remove</span></a>
+                                            <a id="s1" class="btn p-0 fs-3">0</a>
                                             <a onclick="inc('s1');"
-                                                class="list-group-item list-group-item-action text-center active">+</a>
+                                                class="btn btn-primary text-light" type="button"><span class="material-icons">add</span></a>
                                         </div>
                                     </div>
                                 </div>
@@ -71,12 +71,12 @@
                                         <p class="card-text">Lorem ipsum dolor sit amet consectetur adipisicing
                                             elit.
                                             Hic, possimus.</p>
-                                        <div class="list-group list-group-horizontal">
+                                        <div class="btn-group w-100" role="group">
                                             <a onclick="dec('s2');"
-                                                class="list-group-item list-group-item-action bg-danger text-white text-center">-</a>
-                                            <a id="s2" class="list-group-item">0</a>
+                                                class="btn btn-danger text-light" type="button"><span class="material-icons">remove</span></a>
+                                            <a id="s2" class="btn p-0 fs-3">0</a>
                                             <a onclick="inc('s2');"
-                                                class="list-group-item list-group-item-action text-center active">+</a>
+                                                class="btn btn-primary text-light" type="button"><span class="material-icons">add</span></a>
                                         </div>
                                     </div>
                                 </div>
@@ -95,12 +95,12 @@
                                         <p class="card-text">Lorem ipsum dolor sit amet consectetur adipisicing
                                             elit.
                                             Hic, possimus.</p>
-                                        <div class="list-group list-group-horizontal">
+                                        <div class="btn-group w-100" role="group">
                                             <a onclick="dec('m3');"
-                                                class="list-group-item list-group-item-action bg-danger text-white text-center">-</a>
-                                            <a id="m3" class="list-group-item">0</a>
+                                                class="btn btn-danger text-light" type="button"><span class="material-icons">remove</span></a>
+                                            <a id="m3" class="btn p-0 fs-3">0</a>
                                             <a onclick="inc('m3');"
-                                                class="list-group-item list-group-item-action text-center active">+</a>
+                                                class="btn btn-primary text-light" type="button"><span class="material-icons">add</span></a>
                                         </div>
                                     </div>
                                 </div>
@@ -111,12 +111,12 @@
                                         <p class="card-text">Lorem ipsum dolor sit amet consectetur adipisicing
                                             elit.
                                             Hic, possimus.</p>
-                                        <div class="list-group list-group-horizontal">
+                                        <div class="btn-group w-100" role="group">
                                             <a onclick="dec('m4');"
-                                                class="list-group-item list-group-item-action bg-danger text-white text-center">-</a>
-                                            <a id="m4" class="list-group-item">0</a>
+                                                class="btn btn-danger text-light" type="button"><span class="material-icons">remove</span></a>
+                                            <a id="m4" class="btn p-0 fs-3">0</a>
                                             <a onclick="inc('m4');"
-                                                class="list-group-item list-group-item-action text-center active">+</a>
+                                                class="btn btn-primary text-light" type="button"><span class="material-icons">add</span></a>
                                         </div>
                                     </div>
                                 </div>
@@ -127,12 +127,12 @@
                                         <p class="card-text">Lorem ipsum dolor sit amet consectetur adipisicing
                                             elit.
                                             Hic, possimus.</p>
-                                        <div class="list-group list-group-horizontal">
+                                        <div class="btn-group w-100" role="group">
                                             <a onclick="dec('m5');"
-                                                class="list-group-item list-group-item-action bg-danger text-white text-center">-</a>
-                                            <a id="m5" class="list-group-item">0</a>
+                                                class="btn btn-danger text-light" type="button"><span class="material-icons">remove</span></a>
+                                            <a id="m5" class="btn p-0 fs-3">0</a>
                                             <a onclick="inc('m5');"
-                                                class="list-group-item list-group-item-action text-center active">+</a>
+                                                class="btn btn-primary text-light" type="button"><span class="material-icons">add</span></a>
                                         </div>
                                     </div>
                                 </div>                               
@@ -140,8 +140,8 @@
                         </div>
                     </div>
                     <br>
-                    <div style="text-align: center;">
-                        <a class="btn btn-primary w-50" onclick="placeOrder();">Place Order</a>
+                    <div class="text-center">
+                        <a class="btn btn-primary text-light w-50" onclick="placeOrder();">Place Order</a>
                     </div>
                 </div>
             </div>
