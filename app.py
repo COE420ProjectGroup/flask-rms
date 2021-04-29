@@ -45,6 +45,22 @@ class MenuItem:
 	def __repr__(self):
 		return f'Menu({self.name}, {self.desc}, {self.price}, {self.type}, {self.avail})'
 
+class OrderItem:
+	def __init__(self, name, qty, addinfo):
+		self.name = name
+		self.qty = qty
+		self.addinfo = addinfo
+	def __repr__(self):
+		return f'OrderItem({self.name}, {self.qty}, {self.addinfo})'
+
+class Order:
+	def __init__(self, ordNum=-1, date=-1):
+		self.ordNum = ordNum
+		self.items = []
+		self.date = date
+	def __repr__(self):
+		return f'Order({self.ordNum}, {self.items}, {self.date})'
+
 
 @app.route("/")
 def index():
@@ -101,7 +117,34 @@ def dashboard():
 	elif emp.type == 1:
 		return render_template("waiter_dashboard.html", user=emp, bookedTables=[1,3,7,8])
 	elif emp.type == 2:
-		return render_template("chef_dashboard.html", user=emp, bookedTables=[1,3,7,8])
+		connection = cx_Oracle.connect("b00079866/b00079866@coeoracle.aus.edu:1521/orcl")
+		cur = connection.cursor()
+		res = cur.execute("select rorders.ordernum, name, qty, addinfo, o_date from rorders, rorderdetails, rmenu where rorders.ordernum=rorderdetails.ordernum AND rorderdetails.itemid=rmenu.itemid AND placed = 1 AND prepared = 0  AND delivered = 0  AND chef_picked_up is NULL order by o_date")
+		res = list(res)
+		all_orders = {}
+		for i in {o[0] for o in res}:
+				all_orders[i] = Order()
+		for r in res:
+			all_orders[r[0]].ordNum = r[0]
+			all_orders[r[0]].items.append(OrderItem(r[1],r[2],r[3]))
+			all_orders[r[0]].date = r[4]
+
+		print(all_orders)
+
+		cur = connection.cursor()
+		res = cur.execute(f"select rorders.ordernum, name, qty, addinfo, o_date from rorders, rorderdetails, rmenu where rorders.ordernum=rorderdetails.ordernum AND rorderdetails.itemid=rmenu.itemid AND placed = 1 AND prepared = 0  AND delivered = 0  AND chef_picked_up = '{emp.username}' order by o_date")
+		res = list(res)
+		my_orders = {}
+		for i in {o[0] for o in res}:
+				my_orders[i] = Order()
+		for r in res:
+			my_orders[r[0]].ordNum = r[0]
+			my_orders[r[0]].items.append(OrderItem(r[1],r[2],r[3]))
+			my_orders[r[0]].date = r[4]
+		
+		print(my_orders)
+		return render_template("chef_dashboard.html", user=emp, bookedTables=[1,3,7,8], all_orders=all_orders, my_orders=my_orders)
+
 	else:
 		assert False
 
@@ -217,4 +260,19 @@ def place():
 			connection.commit()
 
 	#print(request.json, request.cookies)
+	return 'success'
+
+@app.route("/prepare", methods = ['POST'])
+def prepare():
+	global sessions
+	if getType(request.cookies) != 2:
+		return redirect(url_for('index'))
+	
+	chefUsername = sessions[request.cookies['sessionID']].username
+	print(request.json)
+	orderNum = int(request.json['ordNum'])
+	connection = cx_Oracle.connect("b00079866/b00079866@coeoracle.aus.edu:1521/orcl")
+	cur = connection.cursor()
+	res = cur.execute(f"update rorders set chef_picked_up = '{chefUsername}' where orderNum={orderNum}")
+	connection.commit()
 	return 'success'

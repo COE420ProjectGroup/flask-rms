@@ -3,20 +3,78 @@
 <main class="dashboard">
     <nav class="nav nav-tabs nav-pills flex-column text-center p-4">
         <h4 class="h2 py-3 py-xl-5">Dashboard</h4>
-        <button class="fs-5 pr-2 nav-link active" data-bs-toggle="tab" data-bs-target="#tables" type="button"
+
+        <button class="fs-5 pr-2 nav-link active" data-bs-toggle="tab" href="#orders" data-target="#orders" type="button" role="tab">
+            <span class="material-icons align-middle">list_alt</span>
+            Orders
+        </button>
+
+        <button class="fs-5 pr-2 nav-link" data-bs-toggle="tab" href="#tables" data-target="#tables" type="button"
             role="tab">
             <span class="material-icons align-middle">table_view</span>
             Tables
         </button>
-        <button class="fs-5 pr-2 nav-link" data-bs-toggle="tab" data-bs-target="#orders" type="button" role="tab">
-            <span class="material-icons align-middle">list_alt</span>
-            Orders
-        </button>
+        
+        
     </nav>
 
     <div class="flex-grow-1 tab-content p-md-5 bg-light">
 
-        <div class="card border-primary mb-3 tab-pane active in" role="tabpanel" id="tables">
+
+        <div class="border-primary mb-3 tab-pane active in" role="tabpanel" id="orders">
+            <div class="card-deck">
+                <div class="card">
+                    <div class="card-header h5">Orders in Progress</div>
+                    <div class="card-deck py-4 px-3">
+
+                        {% for order in my_orders.values() %}
+
+                        <div class="card bg-primary text-light p-3">
+                            <strong class="card-title">Order {{order.ordNum}}<br>Placed: {{order.date.strftime('%H:%M:%S')}}</strong>
+                            <ul class="card-body">
+                                {% for item in order.items %}
+                                    <li>{{item.name}}<br>x{{item.qty}}<br>{{item.addinfo if item.addinfo else ''}}</li>
+                                {% endfor %}
+                            </ul>
+                            <button class="btn btn-light text-primary" onclick="complete('{{order.ordNum}}')">
+                                <span class="material-icons align-middle">done_all</span>
+                                Mark as Complete
+                            </button>
+                        </div>
+                        
+                        {% endfor %}
+
+                    </div>
+                </div>
+            </div>
+            <br>
+            <div class="card">
+                <div class="card-header h5">Pending Orders</div>
+                <div class="card-deck py-4 px-3">
+
+                    {% for order in all_orders.values() %}
+
+                    <div class="card bg-light text-primary p-3">
+                        <strong class="card-title">Order {{order.ordNum}}<br>Placed: {{order.date.strftime('%H:%M:%S')}}</strong>
+                        <ul class="card-body">
+                            {% for item in order.items %}
+                                <li>{{item.name}}<br>x{{item.qty}}<br>{{item.addinfo if item.addinfo else ''}}</li>
+                            {% endfor %}
+                        </ul>
+                        <button class="btn btn-primary" onclick="prepare('{{order.ordNum}}')">
+                            <span class="material-icons align-middle">done</span>
+                            Prepare this order
+                        </button>
+                    </div>
+
+                    {% endfor %}
+                    
+                </div>
+            </div>
+        </div>
+
+
+        <div class="card border-primary mb-3 tab-pane fade" role="tabpanel" id="tables">
             <div class="card-header text-primary h5 p-3">Live Table Status</div>
             <div class="card-body">
                 <div class="card-deck">
@@ -55,79 +113,53 @@
             </div>
         </div>
 
-        <div class="border-primary mb-3 tab-pane fade" role="tabpanel" id="orders">
-            <div class="card-deck">
-                <div class="card">
-                    <div class="card-header h5">Orders in Progress</div>
-                    <div class="card-deck py-4 px-3">
-                        <div class="card bg-primary text-light p-3">
-                            <strong class="card-title">Order 1</strong>
-                            <ul class="card-body">
-                                <li>Pasta</li>
-                                <li>Chicken</li>
-                            </ul>
-                            <button class="btn btn-light text-primary">
-                                <span class="material-icons align-middle">done_all</span>
-                                Mark as Complete
-                            </button>
-                        </div>
-                        <div class="card bg-primary text-light p-3">
-                            <strong class="card-title">Order 6</strong>
-                            <ul class="card-body">
-                                <li>Salad</li>
-                                <li>Soup</li>
-                                <li>Chicken</li>
-                            </ul>
-                            <button class="btn btn-light text-primary">
-                                <span class="material-icons align-middle">done_all</span>
-                                Mark as Complete
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <br>
-            <div class="card">
-                <div class="card-header h5">Orders Pending</div>
-                <div class="card-deck py-4 px-3">
-                    <div class="card bg-light text-primary p-3">
-                        <strong class="card-title">Order 3</strong>
-                        <ul class="card-body">
-                            <li>Chicken</li>
-                            <li>Pasta</li>
-                        </ul>
-                        <button class="btn btn-primary">
-                            <span class="material-icons align-middle">done</span>
-                            Prepare this order
-                        </button>
-                    </div>
-                    <div class="card bg-light text-primary p-3">
-                        <strong class="card-title">Order 5</strong>
-                        <ul class="card-body">
-                            <li>Pasta</li>
-                            <li>Chicken</li>
-                        </ul>
-                        <button class="btn btn-primary">
-                            <span class="material-icons align-middle">done</span>
-                            Prepare this order
-                        </button>
-                    </div>
-                    <div class="card bg-light text-primary p-3">
-                        <strong class="card-title">Order 2</strong>
-                        <ul class="card-body">
-                            <li>Salad</li>
-                            <li>Soup</li>
-                            <li>Chicken</li>
-                        </ul>
-                        <button class="btn btn-primary">
-                            <span class="material-icons align-middle">done</span>
-                            Prepare this order
-                        </button>
-                    </div>
-                </div>
-            </div>
-        </div>
+        
 
     </div>
+
+
 </main>
+
+<script>
+
+    var intervalId = setInterval(function() {
+        $('#orders').load(document.URL +  ' #orders')
+    }, 2000);
+
+    function prepare(ordNum) {
+        var xhr = new XMLHttpRequest();
+        var data = {"ordNum" : ordNum};
+            
+        xhr.open("POST", "/prepare", true);
+        xhr.setRequestHeader('Content-Type', 'application/json');
+        xhr.send(JSON.stringify(data));
+
+
+        setTimeout(function() {
+            $('#orders').load(document.URL +  ' #orders');
+        }, 500);
+        
+
+    }
+
+    function complete() {
+
+    }
+
+    
+
+//     $(document).ready(function() {
+//     $("#target").click(function() {
+//         //alert(1);
+//         //location.reload();
+//         //return false;
+//        //$('.nav-tabs button[href="#orders"]').tab('show');
+//        $('#orders').load(document.URL +  ' #orders');
+//     });
+// });
+
+    
+
+</script>
+
 {% endblock content %}
