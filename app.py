@@ -58,8 +58,10 @@ class Order:
 		self.ordNum = ordNum
 		self.items = []
 		self.date = date
+		self.prepared = -1
+		self.delivered = -1
 	def __repr__(self):
-		return f'Order({self.ordNum}, {self.items}, {self.date})'
+		return f'Order({self.ordNum}, {self.items}, {self.date}, {self.prepared}, {self.delivered})'
 
 
 @app.route("/")
@@ -87,12 +89,21 @@ def customer():
 	res = cur.execute("select * from rmenu order by type desc")
 	items = [MenuItem(*i) for i in res]
 	#print(items)
-	res = cur.execute("select rorders.ordernum, name, qty, addinfo from rorders, rorderdetails, rmenu where rorders.ordernum=rorderdetails.ordernum AND rorderdetails.itemid=rmenu.itemid AND custID="+str(cust.custID) + " order by rorders.ordernum")
-	res = [row for row in res]
-	ord = {}
-	for row in res:
-		ord.setdefault(row[0],[]).append(row)
-	return render_template("customer_dashboard.html", user=cust, orders=ord, menu=items)
+	custID = sessions[request.cookies['sessionID']].custID
+	cur = connection.cursor()
+	res = cur.execute(f"select rorders.ordernum, name, qty, addinfo, o_date, prepared, delivered from rorders, rorderdetails, rmenu where rorders.ordernum=rorderdetails.ordernum AND rorderdetails.itemid=rmenu.itemid AND custID = {custID} order by o_date")
+	res = list(res)
+	my_orders = {}
+	for i in {o[0] for o in res}:
+			my_orders[i] = Order()
+	for r in res:
+		my_orders[r[0]].ordNum = r[0]
+		my_orders[r[0]].items.append(OrderItem(r[1],r[2],r[3]))
+		my_orders[r[0]].date = r[4]
+		my_orders[r[0]].prepared = int(r[5])
+		my_orders[r[0]].delivered = int(r[6])
+	print(my_orders)
+	return render_template("customer_dashboard.html", user=cust, my_orders=my_orders, menu=items)
 
 
 
@@ -129,7 +140,7 @@ def dashboard():
 			all_orders[r[0]].items.append(OrderItem(r[1],r[2],r[3]))
 			all_orders[r[0]].date = r[4]
 
-		print(all_orders)
+		#print(all_orders)
 
 		cur = connection.cursor()
 		res = cur.execute(f"select rorders.ordernum, name, qty, addinfo, o_date from rorders, rorderdetails, rmenu where rorders.ordernum=rorderdetails.ordernum AND rorderdetails.itemid=rmenu.itemid AND placed = 1 AND prepared = 0  AND delivered = 0  AND chef_picked_up = '{emp.username}' order by o_date")
@@ -142,7 +153,7 @@ def dashboard():
 			my_orders[r[0]].items.append(OrderItem(r[1],r[2],r[3]))
 			my_orders[r[0]].date = r[4]
 		
-		print(my_orders)
+		#print(my_orders)
 		return render_template("chef_dashboard.html", user=emp, bookedTables=[1,3,7,8], all_orders=all_orders, my_orders=my_orders)
 
 	else:
@@ -274,5 +285,21 @@ def prepare():
 	connection = cx_Oracle.connect("b00079866/b00079866@coeoracle.aus.edu:1521/orcl")
 	cur = connection.cursor()
 	res = cur.execute(f"update rorders set chef_picked_up = '{chefUsername}' where orderNum={orderNum}")
+	connection.commit()
+	return 'success'
+
+
+@app.route("/complete", methods = ['POST'])
+def complete():
+	global sessions
+	if getType(request.cookies) != 2:
+		return redirect(url_for('index'))
+	
+	print(request.json)
+	orderNum = int(request.json['ordNum'])
+	connection = cx_Oracle.connect("b00079866/b00079866@coeoracle.aus.edu:1521/orcl")
+	cur = connection.cursor()
+	res = cur.execute(f"update rorders set prepared = 1 where orderNum={orderNum}")
+	#print(len(res))
 	connection.commit()
 	return 'success'

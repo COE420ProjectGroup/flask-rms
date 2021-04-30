@@ -36,7 +36,7 @@
                                     <li>{{item.name}}<br>x{{item.qty}}<br>{{item.addinfo if item.addinfo else ''}}</li>
                                 {% endfor %}
                             </ul>
-                            <button class="btn btn-light text-primary" onclick="complete('{{order.ordNum}}')">
+                            <button class="btn btn-light text-primary" onclick="prepareOrComplete('{{order.ordNum}}', '/complete')">
                                 <span class="material-icons align-middle">done_all</span>
                                 Mark as Complete
                             </button>
@@ -61,7 +61,7 @@
                                 <li>{{item.name}}<br>x{{item.qty}}<br>{{item.addinfo if item.addinfo else ''}}</li>
                             {% endfor %}
                         </ul>
-                        <button class="btn btn-primary" onclick="prepare('{{order.ordNum}}')">
+                        <button class="btn btn-primary" onclick="prepareOrComplete('{{order.ordNum}}', '/prepare')">
                             <span class="material-icons align-middle">done</span>
                             Prepare this order
                         </button>
@@ -126,11 +126,11 @@
         $('#orders').load(document.URL +  ' #orders')
     }, 2000);
 
-    function prepare(ordNum) {
+    function prepareOrComplete(ordNum, url) {
         var xhr = new XMLHttpRequest();
         var data = {"ordNum" : ordNum};
             
-        xhr.open("POST", "/prepare", true);
+        xhr.open("POST", url, true);
         xhr.setRequestHeader('Content-Type', 'application/json');
         xhr.send(JSON.stringify(data));
 
@@ -142,21 +142,17 @@
 
     }
 
-    function complete() {
-
-    }
-
     
 
-//     $(document).ready(function() {
-//     $("#target").click(function() {
-//         //alert(1);
-//         //location.reload();
-//         //return false;
-//        //$('.nav-tabs button[href="#orders"]').tab('show');
-//        $('#orders').load(document.URL +  ' #orders');
-//     });
-// });
+// //     $(document).ready(function() {
+//      $("#target").click(function() {
+// //         //alert(1);
+// //         //location.reload();
+// //         //return false;
+//         $('.nav-tabs button[href="#tables"]').tab('show');
+// //        $('#orders').load(document.URL +  ' #orders');
+//      });
+// // });
 
     
 

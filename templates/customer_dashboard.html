@@ -3,12 +3,12 @@
 <main class="dashboard">
     <nav class="nav nav-tabs nav-pills flex-column text-center p-4">
         <h4 class="h2 py-3 py-xl-5">Dashboard</h4>
-        <button class="fs-5 pr-2 nav-link active" data-bs-toggle="tab" data-bs-target="#featured" type="button"
-            role="tab">
+
+        <button class="fs-5 pr-2 nav-link active" data-bs-toggle="tab" href="#featured" data-bs-target="#featured" type="button" role="tab">
             <span class="material-icons align-middle">menu_book</span>
             Menu
         </button>
-        <button style="white-space: nowrap;" class="fs-5 pr-2 nav-link" data-bs-toggle="tab"
+        <button style="white-space: nowrap;" class="fs-5 pr-2 nav-link" data-bs-toggle="tab" href="#order_status"
             data-bs-target="#order_status" type="button" role="tab">
             <span class="material-icons align-middle">schedule</span>
             Order Status
@@ -110,39 +110,38 @@
             <!-- </div> -->
 
         </section>
-        <section class="tab-pane fade" role="tabpanel" id="order_status">
+        <section class="tab-pane active in" role="tabpanel" id="order_status">
             <h3>Orders</h3>
             <div class="card card-deck py-4 px-3">
-                <div class="card bg-light text-primary p-3">
-                    <strong class="card-title">Order 3</strong>
+
+                {% for order in my_orders.values() %}
+
+                <div class="card bg-{{'light' if order.delivered == 0 else 'primary'}} text-{{'primary' if order.delivered == 0 else 'light'}} p-3">
+                    <strong class="card-title">Order {{order.ordNum}}<br>Placed: {{order.date.strftime('%H:%M:%S')}}</strong>
                     <ul class="card-body">
-                        <li>Chicken</li>
-                        <li>Pasta</li>
+
+                        {% for item in order.items %}
+                            <li>{{item.name}}<br>x{{item.qty}}<br>{{item.addinfo if item.addinfo else ''}}</li>
+                        {% endfor %}
+
                     </ul>
-                    <strong class="card-footer">Preparing</strong>
+                    <strong class="card-footer">{{'Preparing' if order.prepared == 0 else 'Ready' if order.delivered == 0 else 'Served'}}</strong>
                 </div>
-                <div class="card bg-primary text-light p-3">
-                    <strong class="card-title">Order 1</strong>
-                    <ul class="card-body">
-                        <li>Pasta</li>
-                        <li>Chicken</li>
-                    </ul>
-                    <strong class="card-footer">Served</strong>
-                </div>
-                <div class="card bg-primary text-light p-3">
-                    <strong class="card-title">Order 2</strong>
-                    <ul class="card-body">
-                        <li>Salad</li>
-                        <li>Soup</li>
-                        <li>Chicken</li>
-                    </ul>
-                    <strong class="card-footer">Served</strong>
-                </div>
+                
+                {% endfor %}
+                
             </div>
     </div>
+
 </main>
 
 <script>
+
+
+    var intervalId = setInterval(function() {
+        $('#order_status').load(document.URL +  ' #order_status')
+    }, 2000);
+
     function inc(id) {
         document.getElementById(id).innerHTML = parseInt(document.getElementById(id).innerHTML) + 1;
     }
@@ -192,6 +191,13 @@
             console.log(xhr.responseText);
         }
         console.log(xhr.responseText);
+
+        setTimeout(function() {
+            $('#order_status').load(document.URL +  ' #order_status');
+        }, 500);
+
+        $('.nav-tabs button[href="#order_status"]').tab('show'); // auto tab switch to order status
+        // alert('done');
     }
 </script>
 {% endblock content %}
