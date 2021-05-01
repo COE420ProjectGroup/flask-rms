@@ -16,58 +16,123 @@
 
     <div class="flex-grow-1 tab-content p-md-5 bg-light">
 
-        <div class="card border-primary mb-3 tab-pane active in" role="tabpanel" id="tables">
+        <div class="card border-primary mb-3 tab-pane active in" role="tabpanel" id="orders">
+            <div class="card">
+                <div class="card-header h5">To be delivered</div>
+                <div class="card-deck py-4 px-3">
+
+                    {% for order in my_orders.values() %}
+
+                    <div class="card bg-primary text-light p-3">
+                        <strong class="card-title">Order {{order.ordNum}}<br>Placed:
+                            {{order.date.strftime('%H:%M:%S')}}</strong>
+                        <ul class="card-body">
+                            {% for item in order.items %}
+                            <li>{{item.name}}<br>x{{item.qty}}<br>{{item.addinfo if item.addinfo else ''}}</li>
+                            {% endfor %}
+                        </ul>
+                        <button class="btn btn-light text-primary"
+                            onclick="collectOrDeliver('{{order.ordNum}}', '/deliver')">
+                            <span class="material-icons align-middle">done_all</span>
+                            Mark as Delivered
+                        </button>
+                    </div>
+
+                    {% endfor %}
+
+                </div>
+            </div>
+            <br>
+            <div class="card">
+                <div class="card-header h5">Prepared Orders</div>
+                <div class="card-deck py-4 px-3">
+
+                    {% for order in prep_orders.values() %}
+
+                    <div class="card bg-light text-primary p-3">
+                        <strong class="card-title">Order {{order.ordNum}}<br>Placed:
+                            {{order.date.strftime('%H:%M:%S')}}</strong>
+                        <ul class="card-body">
+                            {% for item in order.items %}
+                            <li>{{item.name}}<br>x{{item.qty}}<br>{{item.addinfo if item.addinfo else ''}}</li>
+                            {% endfor %}
+                        </ul>
+                        <button class="btn btn-primary" onclick="collectOrDeliver('{{order.ordNum}}', '/collect')">
+                            <span class="material-icons align-middle">done</span>
+                            Collect this order
+                        </button>
+                    </div>
+
+                    {% endfor %}
+
+                </div>
+            </div>
+
+
+        </div>
+        <div class="card border-primary mb-3 tab-pane fade" role="tabpanel" id="tables">
             <div class="card-header text-primary h5 p-3">Live Table Status</div>
             <div class="card-body">
                 <div class="card-deck">
                     {% for i in range(1,6) %}
-                        {% if i in bookedTables %}
-                        <div class="card bg-primary text-light p-3">
-                            <strong class="card-title">Table {{i}}</strong>
-                            <p>Booked</p>
-                        </div>
-                        {% else %}
-                        <div class="card bg-light text-primary p-3">
-                            <strong class="card-title">Table {{i}}</strong>
-                            <p>Vacant</p>
-                        </div>
-                        {% endif %}
+                    {% if i in bookedTables %}
+                    <div class="card bg-primary text-light p-3">
+                        <strong class="card-title">Table {{i}}</strong>
+                        <p>Booked</p>
+                    </div>
+                    {% else %}
+                    <div class="card bg-light text-primary p-3">
+                        <strong class="card-title">Table {{i}}</strong>
+                        <p>Vacant</p>
+                    </div>
+                    {% endif %}
 
                     {% endfor %}
                 </div>
                 <br>
                 <div class="card-deck">
                     {% for i in range(6, 11) %}
-                        {% if i in bookedTables %}
-                        <div class="card bg-primary text-light p-3">
-                            <strong class="card-title">Table {{i}}</strong>
-                            <p>Booked</p>
-                        </div>
-                        {% else %}
-                        <div class="card bg-light text-primary p-3">
-                            <strong class="card-title">Table {{i}}</strong>
-                            <p>Vacant</p>
-                        </div>
-                        {% endif %}
+                    {% if i in bookedTables %}
+                    <div class="card bg-primary text-light p-3">
+                        <strong class="card-title">Table {{i}}</strong>
+                        <p>Booked</p>
+                    </div>
+                    {% else %}
+                    <div class="card bg-light text-primary p-3">
+                        <strong class="card-title">Table {{i}}</strong>
+                        <p>Vacant</p>
+                    </div>
+                    {% endif %}
 
                     {% endfor %}
                 </div>
             </div>
         </div>
 
-        <div class="card border-primary mb-3 tab-pane fade" role="tabpanel" id="orders">
-            <div class="card-header text-primary h5 p-3">Orders</div>
-            <div class="card-body">
-                <div class="card-deck">
-
-                </div>
-                <br>
-                <div class="card-deck">
-
-                </div>
-            </div>
-        </div>
-
-    </div>
 </main>
+
+<script>
+
+    var intervalId = setInterval(function () {
+        $('#orders').load(document.URL + ' #orders')
+    }, 2000);
+
+    function collectOrDeliver(ordNum, url) {
+        var xhr = new XMLHttpRequest();
+        var data = { "ordNum": ordNum };
+
+        xhr.open("POST", url, true);
+        xhr.setRequestHeader('Content-Type', 'application/json');
+        xhr.send(JSON.stringify(data));
+
+
+        setTimeout(function () {
+            $('#orders').load(document.URL + ' #orders');
+        }, 500);
+
+
+    }
+
+</script>
+
 {% endblock content %}

@@ -102,7 +102,7 @@ def customer():
 		my_orders[r[0]].date = r[4]
 		my_orders[r[0]].prepared = int(r[5])
 		my_orders[r[0]].delivered = int(r[6])
-	print(my_orders)
+	#print(my_orders)
 	return render_template("customer_dashboard.html", user=cust, my_orders=my_orders, menu=items)
 
 
@@ -126,7 +126,30 @@ def dashboard():
 	if emp.type == 0:
 		return render_template("manager_dashboard.html", user=emp, bookedTables=[1,3,7,8])
 	elif emp.type == 1:
-		return render_template("waiter_dashboard.html", user=emp, bookedTables=[1,3,7,8])
+		connection = cx_Oracle.connect("b00079866/b00079866@coeoracle.aus.edu:1521/orcl")
+		cur = connection.cursor()
+		res = cur.execute("select rorders.ordernum, name, qty, addinfo, o_date from rorders, rorderdetails, rmenu where rorders.ordernum=rorderdetails.ordernum AND rorderdetails.itemid=rmenu.itemid AND placed = 1 AND prepared = 1  AND delivered = 0  AND waiter_picked_up is NULL order by o_date")
+		res = list(res)
+		prep_orders = {}
+		for i in {o[0] for o in res}:
+				prep_orders[i] = Order()
+		for r in res:
+			prep_orders[r[0]].ordNum = r[0]
+			prep_orders[r[0]].items.append(OrderItem(r[1],r[2],r[3]))
+			prep_orders[r[0]].date = r[4]
+
+		cur = connection.cursor()
+		res = cur.execute(f"select rorders.ordernum, name, qty, addinfo, o_date from rorders, rorderdetails, rmenu where rorders.ordernum=rorderdetails.ordernum AND rorderdetails.itemid=rmenu.itemid AND placed = 1 AND prepared = 1  AND delivered = 0  AND waiter_picked_up = '{emp.username}' order by o_date")
+		res = list(res)
+		my_orders = {}
+		for i in {o[0] for o in res}:
+				my_orders[i] = Order()
+		for r in res:
+			my_orders[r[0]].ordNum = r[0]
+			my_orders[r[0]].items.append(OrderItem(r[1],r[2],r[3]))
+			my_orders[r[0]].date = r[4]
+		
+		return render_template("waiter_dashboard.html", user=emp, bookedTables=[1,3,7,8], prep_orders=prep_orders, my_orders=my_orders)
 	elif emp.type == 2:
 		connection = cx_Oracle.connect("b00079866/b00079866@coeoracle.aus.edu:1521/orcl")
 		cur = connection.cursor()
@@ -280,7 +303,7 @@ def prepare():
 		return redirect(url_for('index'))
 	
 	chefUsername = sessions[request.cookies['sessionID']].username
-	print(request.json)
+	#print(request.json)
 	orderNum = int(request.json['ordNum'])
 	connection = cx_Oracle.connect("b00079866/b00079866@coeoracle.aus.edu:1521/orcl")
 	cur = connection.cursor()
@@ -295,11 +318,41 @@ def complete():
 	if getType(request.cookies) != 2:
 		return redirect(url_for('index'))
 	
-	print(request.json)
+	#print(request.json)
 	orderNum = int(request.json['ordNum'])
 	connection = cx_Oracle.connect("b00079866/b00079866@coeoracle.aus.edu:1521/orcl")
 	cur = connection.cursor()
 	res = cur.execute(f"update rorders set prepared = 1 where orderNum={orderNum}")
 	#print(len(res))
+	connection.commit()
+	return 'success'
+
+@app.route("/collect", methods= ['POST'])
+def collect():
+	print(request.json)
+	global sessions
+	if getType(request.cookies) != 1:
+		return redirect(url_for('index'))
+	
+	waiterUsername = sessions[request.cookies['sessionID']].username
+	print(request.json)
+	orderNum = int(request.json['ordNum'])
+	connection = cx_Oracle.connect("b00079866/b00079866@coeoracle.aus.edu:1521/orcl")
+	cur = connection.cursor()
+	res = cur.execute(f"update rorders set waiter_picked_up = '{waiterUsername}' where orderNum={orderNum}")
+	connection.commit()
+	return 'success'
+
+@app.route("/deliver", methods = ['POST'])
+def deliver():
+	global sessions
+	if getType(request.cookies) != 1:
+		return redirect(url_for('index'))
+	
+	#print(request.json)
+	orderNum = int(request.json['ordNum'])
+	connection = cx_Oracle.connect("b00079866/b00079866@coeoracle.aus.edu:1521/orcl")
+	cur = connection.cursor()
+	res = cur.execute(f"update rorders set delivered = 1 where orderNum={orderNum}")
 	connection.commit()
 	return 'success'

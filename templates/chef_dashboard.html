@@ -4,7 +4,8 @@
     <nav class="nav nav-tabs nav-pills flex-column text-center p-4">
         <h4 class="h2 py-3 py-xl-5">Dashboard</h4>
 
-        <button class="fs-5 pr-2 nav-link active" data-bs-toggle="tab" href="#orders" data-target="#orders" type="button" role="tab">
+        <button class="fs-5 pr-2 nav-link active" data-bs-toggle="tab" href="#orders" data-target="#orders"
+            type="button" role="tab">
             <span class="material-icons align-middle">list_alt</span>
             Orders
         </button>
@@ -14,37 +15,37 @@
             <span class="material-icons align-middle">table_view</span>
             Tables
         </button>
-        
-        
+
+
     </nav>
 
     <div class="flex-grow-1 tab-content p-md-5 bg-light">
 
 
         <div class="border-primary mb-3 tab-pane active in" role="tabpanel" id="orders">
-            <div class="card-deck">
-                <div class="card">
-                    <div class="card-header h5">Orders in Progress</div>
-                    <div class="card-deck py-4 px-3">
+            <div class="card">
+                <div class="card-header h5">Orders in Progress</div>
+                <div class="card-deck py-4 px-3">
 
-                        {% for order in my_orders.values() %}
+                    {% for order in my_orders.values() %}
 
-                        <div class="card bg-primary text-light p-3">
-                            <strong class="card-title">Order {{order.ordNum}}<br>Placed: {{order.date.strftime('%H:%M:%S')}}</strong>
-                            <ul class="card-body">
-                                {% for item in order.items %}
-                                    <li>{{item.name}}<br>x{{item.qty}}<br>{{item.addinfo if item.addinfo else ''}}</li>
-                                {% endfor %}
-                            </ul>
-                            <button class="btn btn-light text-primary" onclick="prepareOrComplete('{{order.ordNum}}', '/complete')">
-                                <span class="material-icons align-middle">done_all</span>
-                                Mark as Complete
-                            </button>
-                        </div>
-                        
-                        {% endfor %}
-
+                    <div class="card bg-primary text-light p-3">
+                        <strong class="card-title">Order {{order.ordNum}}<br>Placed:
+                            {{order.date.strftime('%H:%M:%S')}}</strong>
+                        <ul class="card-body">
+                            {% for item in order.items %}
+                                <li>{{item.name}}<br>x{{item.qty}}<br>{{item.addinfo if item.addinfo else ''}}</li>
+                            {% endfor %}
+                        </ul>
+                        <button class="btn btn-light text-primary"
+                            onclick="prepareOrComplete('{{order.ordNum}}', '/complete')">
+                            <span class="material-icons align-middle">done_all</span>
+                            Mark as Complete
+                        </button>
                     </div>
+
+                    {% endfor %}
+
                 </div>
             </div>
             <br>
@@ -55,10 +56,11 @@
                     {% for order in all_orders.values() %}
 
                     <div class="card bg-light text-primary p-3">
-                        <strong class="card-title">Order {{order.ordNum}}<br>Placed: {{order.date.strftime('%H:%M:%S')}}</strong>
+                        <strong class="card-title">Order {{order.ordNum}}<br>Placed:
+                            {{order.date.strftime('%H:%M:%S')}}</strong>
                         <ul class="card-body">
                             {% for item in order.items %}
-                                <li>{{item.name}}<br>x{{item.qty}}<br>{{item.addinfo if item.addinfo else ''}}</li>
+                            <li>{{item.name}}<br>x{{item.qty}}<br>{{item.addinfo if item.addinfo else ''}}</li>
                             {% endfor %}
                         </ul>
                         <button class="btn btn-primary" onclick="prepareOrComplete('{{order.ordNum}}', '/prepare')">
@@ -68,9 +70,10 @@
                     </div>
 
                     {% endfor %}
-                    
+
                 </div>
             </div>
+        
         </div>
 
 
@@ -79,41 +82,41 @@
             <div class="card-body">
                 <div class="card-deck">
                     {% for i in range(1,6) %}
-                        {% if i in bookedTables %}
-                        <div class="card bg-primary text-light p-3">
-                            <strong class="card-title">Table {{i}}</strong>
-                            <p>Booked</p>
-                        </div>
-                        {% else %}
-                        <div class="card bg-light text-primary p-3">
-                            <strong class="card-title">Table {{i}}</strong>
-                            <p>Vacant</p>
-                        </div>
-                        {% endif %}
+                    {% if i in bookedTables %}
+                    <div class="card bg-primary text-light p-3">
+                        <strong class="card-title">Table {{i}}</strong>
+                        <p>Booked</p>
+                    </div>
+                    {% else %}
+                    <div class="card bg-light text-primary p-3">
+                        <strong class="card-title">Table {{i}}</strong>
+                        <p>Vacant</p>
+                    </div>
+                    {% endif %}
 
                     {% endfor %}
                 </div>
                 <br>
                 <div class="card-deck">
                     {% for i in range(6, 11) %}
-                        {% if i in bookedTables %}
-                        <div class="card bg-primary text-light p-3">
-                            <strong class="card-title">Table {{i}}</strong>
-                            <p>Booked</p>
-                        </div>
-                        {% else %}
-                        <div class="card bg-light text-primary p-3">
-                            <strong class="card-title">Table {{i}}</strong>
-                            <p>Vacant</p>
-                        </div>
-                        {% endif %}
+                    {% if i in bookedTables %}
+                    <div class="card bg-primary text-light p-3">
+                        <strong class="card-title">Table {{i}}</strong>
+                        <p>Booked</p>
+                    </div>
+                    {% else %}
+                    <div class="card bg-light text-primary p-3">
+                        <strong class="card-title">Table {{i}}</strong>
+                        <p>Vacant</p>
+                    </div>
+                    {% endif %}
 
                     {% endfor %}
                 </div>
             </div>
         </div>
 
-        
+
 
     </div>
 
@@ -122,27 +125,27 @@
 
 <script>
 
-    var intervalId = setInterval(function() {
-        $('#orders').load(document.URL +  ' #orders')
+    var intervalId = setInterval(function () {
+        $('#orders').load(document.URL + ' #orders')
     }, 2000);
 
     function prepareOrComplete(ordNum, url) {
         var xhr = new XMLHttpRequest();
-        var data = {"ordNum" : ordNum};
-            
+        var data = { "ordNum": ordNum };
+
         xhr.open("POST", url, true);
         xhr.setRequestHeader('Content-Type', 'application/json');
         xhr.send(JSON.stringify(data));
 
 
-        setTimeout(function() {
-            $('#orders').load(document.URL +  ' #orders');
+        setTimeout(function () {
+            $('#orders').load(document.URL + ' #orders');
         }, 500);
-        
+
 
     }
 
-    
+
 
 // //     $(document).ready(function() {
 //      $("#target").click(function() {
@@ -154,7 +157,7 @@
 //      });
 // // });
 
-    
+
 
 </script>
 

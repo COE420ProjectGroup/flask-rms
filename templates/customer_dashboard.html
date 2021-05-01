@@ -11,7 +11,7 @@
         <button style="white-space: nowrap;" class="fs-5 pr-2 nav-link" data-bs-toggle="tab" href="#order_status"
             data-bs-target="#order_status" type="button" role="tab">
             <span class="material-icons align-middle">schedule</span>
-            Order Status
+            My Orders
         </button>
 
     </nav>
@@ -125,7 +125,7 @@
                         {% endfor %}
 
                     </ul>
-                    <strong class="card-footer">{{'Preparing' if order.prepared == 0 else 'Ready' if order.delivered == 0 else 'Served'}}</strong>
+                    <strong class="card-footer">{{'In the kitchen' if order.prepared == 0 else 'On its way to you' if order.delivered == 0 else 'Served'}}</strong>
                 </div>
                 
                 {% endfor %}
