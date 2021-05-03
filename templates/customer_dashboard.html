@@ -159,21 +159,25 @@
             var ele = document.getElementById("m" + i);
             if (ele) {
                 data["m" + i] = ele.innerHTML;
+                ele.innerHTML = 0;
             }
             else {
                 ele = document.getElementById("s" + i);
                 if (ele) {
                     data["s" + i] = ele.innerHTML;
+                    ele.innerHTML = 0;
                 }
                 else {
                     ele = document.getElementById("b" + i);
                     if (ele) {
                         data["b" + i] = ele.innerHTML;
+                        ele.innerHTML = 0;
                     }
                     else {
                         ele = document.getElementById("d" + i);
                         if (ele) {
                             data["d" + i] = ele.innerHTML;
+                            ele.innerHTML = 0;
                         }
                         else {
                             break;
