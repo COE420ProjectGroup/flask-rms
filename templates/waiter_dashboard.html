@@ -115,6 +115,7 @@
 
     var intervalId = setInterval(function () {
         $('#orders').load(document.URL + ' #orders')
+        $('#tables').load(document.URL + ' #tables')
     }, 2000);
 
     function collectOrDeliver(ordNum, url) {
