@@ -124,7 +124,11 @@ def dashboard():
 	else:
 		return redirect(url_for('login'))
 	if emp.type == 0:
-		return render_template("manager_dashboard.html", user=emp, bookedTables=[1,3,7,8])
+		connection = cx_Oracle.connect("b00079866/b00079866@coeoracle.aus.edu:1521/orcl")
+		cur = connection.cursor()
+		res = cur.execute("select tablecode from rcustomer where tablecode is not null and paymentCompletedBy is NULL")
+		bookedTables = [r[0] for r in res]
+		return render_template("manager_dashboard.html", user=emp, bookedTables=bookedTables)
 	elif emp.type == 1:
 		connection = cx_Oracle.connect("b00079866/b00079866@coeoracle.aus.edu:1521/orcl")
 		cur = connection.cursor()
@@ -148,8 +152,10 @@ def dashboard():
 			my_orders[r[0]].ordNum = r[0]
 			my_orders[r[0]].items.append(OrderItem(r[1],r[2],r[3]))
 			my_orders[r[0]].date = r[4]
-		
-		return render_template("waiter_dashboard.html", user=emp, bookedTables=[1,3,7,8], prep_orders=prep_orders, my_orders=my_orders)
+		cur = connection.cursor()
+		res = cur.execute("select tablecode from rcustomer where tablecode is not null and paymentCompletedBy is NULL")
+		bookedTables = [r[0] for r in res]
+		return render_template("waiter_dashboard.html", user=emp, bookedTables=bookedTables, prep_orders=prep_orders, my_orders=my_orders)
 	elif emp.type == 2:
 		connection = cx_Oracle.connect("b00079866/b00079866@coeoracle.aus.edu:1521/orcl")
 		cur = connection.cursor()
@@ -177,7 +183,10 @@ def dashboard():
 			my_orders[r[0]].date = r[4]
 		
 		#print(my_orders)
-		return render_template("chef_dashboard.html", user=emp, bookedTables=[1,3,7,8], all_orders=all_orders, my_orders=my_orders)
+		cur = connection.cursor()
+		res = cur.execute("select tablecode from rcustomer where tablecode is not null and paymentCompletedBy is NULL")
+		bookedTables = [r[0] for r in res]
+		return render_template("chef_dashboard.html", user=emp, bookedTables=bookedTables, all_orders=all_orders, my_orders=my_orders)
 
 	else:
 		assert False
@@ -248,7 +257,14 @@ def register():
 				resp.set_cookie('sessionID', '', expires=0)
 				return resp
 		else:
-			return render_template('customer_registration.html')
+			vacantTables = []
+			connection = cx_Oracle.connect("b00079866/b00079866@coeoracle.aus.edu:1521/orcl")
+			cur = connection.cursor()
+			res = cur.execute("select tablecode from rcustomer where tablecode is not null and paymentCompletedBy is NULL")
+			bookedTables = [r[0] for r in res]
+			vacantTables = (set(range(1,11)) - set(bookedTables))
+			# print(vacantTables)
+			return render_template('customer_registration.html', vacantTables=vacantTables)
 	# else POST
 	fname = request.form['fname']
 	lname = request.form['lname']
@@ -259,7 +275,7 @@ def register():
 	custID = int(list(res)[0][0]) + 1 # incr custID
 
 	cur = connection.cursor()
-	res = cur.execute("insert into rcustomer (custID, tablecode, fname, lname, paymentRequested) values ({},'{}','{}','{}',0)".format(custID,tcode, fname, lname))
+	res = cur.execute("insert into rcustomer (custID, tablecode, fname, lname, paymentRequested) values ({}, {},'{}','{}',0)".format(custID, tcode, fname, lname))
 	connection.commit()
 	print(res)
 	cust = Customer(fname, lname, tcode, custID)
