@@ -371,3 +371,34 @@ def deliver():
 	res = cur.execute(f"update rorders set delivered = 1 where orderNum={orderNum}")
 	connection.commit()
 	return 'success'
+
+@app.route("/addEmployee", methods = ['POST'])
+def addEmployee():
+	print(request.json)
+	print("123")
+	""" fname = request.form['fname']
+	lname = request.form['lname']
+	userName = request.form['uname']
+	pwd = md5(request.form['pwd'].encode()).hexdigest()
+	email = request.form['email']
+	userType = request.form['userType']
+	if userType=="Chef" :
+		userType = 2
+	elif userType=="Waiter" :
+		userType = 1
+	else:
+		userType = 0
+	connection = cx_Oracle.connect("b00079866/b00079866@coeoracle.aus.edu:1521/orcl")
+	cur = connection.cursor()
+	res = cur.execute("insert into remployeeaccounts (fname, lname, username, password, email, type) values ('{}','{}','{}','{}','{}',{})".format(fname, lname, userName, pwd, email, userType))
+	connection.commit() """
+	return 'success'
+
+@app.route("/delEmployee", methods = ['POST'])
+def delEmployee():
+	username = str(request.json['username'])
+	connection = cx_Oracle.connect("b00079866/b00079866@coeoracle.aus.edu:1521/orcl")
+	cur = connection.cursor()
+	res = cur.execute(f"delete from remployeeaccounts where username='{username}'")
+	connection.commit()
+	return 'success'

@@ -1,0 +1,203 @@
+{% extends 'base_dashboard.html' %}
+{% block content %}
+
+<div class="modal fade" id="employeeAccountModal" tabindex="-1" aria-labelledby="employeeAccountModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Add a New Employee</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form action="" method="POST" id=employeeForm>
+                <div class="modal-body text-center">
+                    <div class="col-md">
+                        <label for="firstName" class="form-label">First name</label>
+                        <input type="text" class="form-control" id="fname" placeholder="Muhammad" name="fname" required>
+                    </div>
+                    <div class="col-md">
+                        <label for="lastName" class="form-label">Last name</label>
+                        <input type="text" class="form-control" id="lname" placeholder="Ali" name="lname" required>
+                    </div>
+                    <div class="col-md">
+                        <label for="userName" class="form-label">Username</label>
+                        <input type="text" class="form-control" id="uname" placeholder="Username" name="uname" required>
+                    </div>
+                    <div class="col-md">
+                        <label for="password" class="form-label">Password</label>
+                        <input type="password" class="form-control" id="pwd" placeholder="*****" name="pwd" required>
+                    </div>
+                    <div class="col-md">
+                        <label for="email" class="form-label">Email ID</label>
+                        <input type="email" class="form-control" id="email" placeholder="Email ID" name="email" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="userType">Employee Type</label>
+                        <select class="form-control" id="userType" name="userType">
+                          <option>Waiter</option>
+                          <option>Chef</option>
+                          <option>Manager</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cancel</button>
+                    <button class="btn btn-primary w-75" type="submit" data-bs-dismiss="modal"
+                        onclick="addUser('/addEmployee')">
+                        Add Employee
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<main class="dashboard">
+    <nav class="nav nav-tabs nav-pills flex-column text-center p-4">
+        <h4 class="h2 py-3 py-xl-5">Dashboard</h4>
+        <button class="fs-5 pr-2 nav-link active" data-bs-toggle="tab" data-bs-target="#manage_account" type="button" role="tab">
+            <span class="material-icons align-middle">list_alt</span>
+            Manage Employee Accounts 
+        </button>
+        <button class="fs-5 pr-2 nav-link" data-bs-toggle="tab" data-bs-target="#customize_menu" type="button"
+            role="tab">
+            <span class="material-icons align-middle">table_view</span>
+            Customize Menu
+        </button>
+        <button class="fs-5 pr-2 nav-link" data-bs-toggle="tab" data-bs-target="#sales_history" type="button" role="tab">
+            <span class="material-icons align-middle">list_alt</span>
+            Sales History
+        </button>
+    </nav>
+
+    <div class="flex-grow-1 tab-content p-md-5 bg-light">
+
+        <div class="card border-primary mb-3 tab-pane active in" role="tabpanel" id="manage_account">
+            <div class="card-header text-primary h5 p-3">Manage Employee Accounts</div>
+            <div class="card-body">
+                <div class="card-deck">
+                    <table>
+                        <tr>
+                            <th>First Name</th>
+                            <th>Last Name</th>
+                            <th>Username</th>
+                            <th>Email</th>
+                            <th>Type</th>
+                            <th>Actions</th>
+                        </tr>
+                        {% for employee in employeeAccounts %}
+                            <tr>
+                                <td>{{ employee[0] }}</td>
+                                <td>{{ employee[1] }}</td>
+                                <td>{{ employee[2] }}</td>
+                                <td>{{ employee[3] }}</td>
+
+                                {% if employee[4]== 0 %}
+                                    <td>Manager</td>
+                                {% elif employee[4]== 1 %}
+                                    <td>Waiter</td>
+                                {% else %}
+                                    <td>Chef</td>
+                                {% endif %}
+                                <td>
+                                    <a href="" onclick="delEmployee('{{employee[2]}}', '/delEmployee')">Delete</a>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </table>
+                </div>
+
+                <br>
+                <a href="#" data-bs-toggle="modal" data-bs-target="#employeeAccountModal"
+                class="list-group-item list-group-item-action text-center active">Add New Employee</a>
+            </div>
+   
+            
+        </div>
+
+        <div class="card border-primary mb-3 tab-pane" role="tabpanel" id="customize_menu">
+            <div class="card-header text-primary h5 p-3">Customize Menu</div>
+            <div class="card-body">
+                <div class="card-deck">
+
+                </div>
+                <br>
+                <div class="card-deck">
+
+                </div>
+            </div>
+        </div>
+
+        
+        <div class="card border-primary mb-3 tab-pane fade" role="tabpanel" id="sales_history">
+            <div class="card-header text-primary h5 p-3">Sales History</div>
+            <div class="card-body">
+                <div class="card-deck">
+
+                </div>
+                <br>
+                <div class="card-deck">
+
+                </div>
+            </div>
+        </div>
+
+        
+
+    </div>
+</main>
+<script>
+
+   /* var intervalId = setInterval(function () {
+        $('#manage_account').load(document.URL + '#manage_account')
+    }, 2000);*/
+
+    function buildJsonFormData(form) {
+    const jsonFormData = { };
+    for(const pair of new FormData(form)) {
+        jsonFormData[pair[0]] = pair[1];
+    }
+    return jsonFormData;
+    }
+
+    function addUser( url) {
+        var xhr = new XMLHttpRequest();
+        //fname,lname, pwd,email,userType,uname,
+        /*fname= request.form['fname'];
+        lname= request.form['lname'];
+        pwd= request.form['pwd'];
+        userType= request.form['userType'];
+        uname= request.form['uname'];
+        var data = { "fname": fname,"lname": lname,"pwd": pwd,"email": email,"userType": userType,"uname": uname };
+        /*formdata.append("fname", document.getElementById("fname"))
+        formdata.append("lname", document.getElementById("lname"))
+        formdata.append("pwd", document.getElementById("pwd"))
+        formdata.append("email", document.getElementById("email"))
+        formdata.append("userType", document.getElementById("userType"))
+        formdata.append("uname", document.getElementById("uname"))*/
+        const data = buildJsonFormData(document.querySelector("#employeeForm"))
+        xhr.open("POST", url, true);
+        xhr.setRequestHeader('Content-Type', 'application/json');
+        xhr.send(data);
+
+    }
+
+    function delEmployee(username, url) {
+        var xhr = new XMLHttpRequest();
+        var data = { "username": username };
+        xhr.open("POST", url, true);
+        xhr.setRequestHeader('Content-Type', 'application/json');
+        xhr.send(JSON.stringify(data));
+
+
+        setTimeout(function () {
+            $('#manage_account').load(document.URL + ' #manage_account');
+        }, 500);
+
+
+    }
+
+
+
+</script>
+{% endblock content %}
