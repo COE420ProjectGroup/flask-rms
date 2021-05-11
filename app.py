@@ -251,9 +251,19 @@ def register():
 				if sessions[s].type == 3:
 					return redirect(url_for('customer'))
 				else:
-					return render_template('customer_registration.html')
+					connection = cx_Oracle.connect("b00079866/b00079866@coeoracle.aus.edu:1521/orcl")
+					cur = connection.cursor()
+					res = cur.execute("select tablecode from rcustomer where tablecode is not null and paymentCompletedBy is NULL")
+					bookedTables = [r[0] for r in res]
+					vacantTables = (set(range(1,11)) - set(bookedTables))
+					return render_template('customer_registration.html', vacantTables=vacantTables)
 			else: # invalid sessionID cookie
-				resp = make_response(render_template("customer_registration.html"))
+				connection = cx_Oracle.connect("b00079866/b00079866@coeoracle.aus.edu:1521/orcl")
+				cur = connection.cursor()
+				res = cur.execute("select tablecode from rcustomer where tablecode is not null and paymentCompletedBy is NULL")
+				bookedTables = [r[0] for r in res]
+				vacantTables = (set(range(1,11)) - set(bookedTables))
+				resp = make_response(render_template("customer_registration.html", vacantTables=vacantTables))
 				resp.set_cookie('sessionID', '', expires=0)
 				return resp
 		else:
