@@ -286,11 +286,12 @@ def place():
 	res = cur.execute(f"insert into rorders (orderNum, custID, o_date, placed, prepared, delivered) values ({ordnum},{custID},TO_DATE('{n.day}/{n.month}/{n.year} {n.hour}:{n.minute}:{n.second}', 'dd/mm/yy hh24:mi:ss'), 1, 0, 0)")
 	connection.commit()
 
-	for itemID, qty in request.json.items():
-		if qty != '0':
+	for itemID, item in request.json.items():
+		if item['qty'] != '0':
+			qty, addinfo = item.values()
 			cur = connection.cursor()
-			#print(f"insert into rorderDetails values ({ordnum},{itemID[1:]},{qty},NULL)")
-			res = cur.execute(f"insert into rorderDetails values ({ordnum},{itemID[1:]},{qty},NULL)")
+			# print(f"insert into rorderDetails values ({ordnum},{itemID[1:]},{qty},{addinfo})")
+			res = cur.execute(f"insert into rorderDetails values ({ordnum},{itemID[1:]},{qty},'{addinfo}')")
 			connection.commit()
 
 	#print(request.json, request.cookies)

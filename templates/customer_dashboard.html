@@ -167,26 +167,30 @@
         while (true) {
             var ele = document.getElementById("m" + i);
             if (ele) {
-                data["m" + i] = ele.innerHTML;
+                data["m" + i] = {"qty": ele.innerHTML, "addinfo": document.getElementById("m" + i + "_add_info").value};
                 ele.innerHTML = 0;
+                document.getElementById("m" + i + "_add_info").value = "";
             }
             else {
                 ele = document.getElementById("s" + i);
                 if (ele) {
-                    data["s" + i] = ele.innerHTML;
+                    data["s" + i] = {"qty": ele.innerHTML, "addinfo": document.getElementById("s" + i + "_add_info").value};
                     ele.innerHTML = 0;
+                    document.getElementById("s" + i + "_add_info").value = "";
                 }
                 else {
                     ele = document.getElementById("b" + i);
                     if (ele) {
-                        data["b" + i] = ele.innerHTML;
+                        data["b" + i] = {"qty": ele.innerHTML, "addinfo": document.getElementById("b" + i + "_add_info").value};
                         ele.innerHTML = 0;
+                        document.getElementById("b" + i + "_add_info").value = "";
                     }
                     else {
                         ele = document.getElementById("d" + i);
                         if (ele) {
-                            data["d" + i] = ele.innerHTML;
+                            data["d" + i] = {"qty": ele.innerHTML, "addinfo": document.getElementById("d" + i + "_add_info").value};
                             ele.innerHTML = 0;
+                            document.getElementById("d" + i + "_add_info").value = "";
                         }
                         else {
                             break;
@@ -197,13 +201,15 @@
             i = i + 1;
         }
 
+        // console.log(JSON.stringify(data));
+
         xhr.open("POST", "/place", true);
         xhr.setRequestHeader('Content-Type', 'application/json');
         xhr.send(JSON.stringify(data));
         if (xhr.readyState == XMLHttpRequest.DONE) {
             console.log(xhr.responseText);
         }
-        console.log(xhr.responseText);
+        // console.log(xhr.responseText);
 
         setTimeout(function() {
             $('#order_status').load(document.URL +  ' #order_status');
