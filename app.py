@@ -46,10 +46,11 @@ class MenuItem:
 		return f'Menu({self.name}, {self.desc}, {self.price}, {self.type}, {self.avail})'
 
 class OrderItem:
-	def __init__(self, name, qty, addinfo):
+	def __init__(self, name, qty, addinfo, price = -1):
 		self.name = name
 		self.qty = qty
 		self.addinfo = addinfo
+		self.price = price
 	def __repr__(self):
 		return f'OrderItem({self.name}, {self.qty}, {self.addinfo})'
 
@@ -60,6 +61,8 @@ class Order:
 		self.date = date
 		self.prepared = -1
 		self.delivered = -1
+	def total(self):
+		return sum([item.qty * item.price for item in self.items])
 	def __repr__(self):
 		return f'Order({self.ordNum}, {self.items}, {self.date}, {self.prepared}, {self.delivered})'
 
@@ -91,19 +94,19 @@ def customer():
 	#print(items)
 	custID = sessions[request.cookies['sessionID']].custID
 	cur = connection.cursor()
-	res = cur.execute(f"select rorders.ordernum, name, qty, addinfo, o_date, prepared, delivered from rorders, rorderdetails, rmenu where rorders.ordernum=rorderdetails.ordernum AND rorderdetails.itemid=rmenu.itemid AND custID = {custID} order by o_date")
+	res = cur.execute(f"select rorders.ordernum, name, qty, addinfo, o_date, prepared, delivered, price from rorders, rorderdetails, rmenu where rorders.ordernum=rorderdetails.ordernum AND rorderdetails.itemid=rmenu.itemid AND custID = {custID} order by o_date")
 	res = list(res)
 	my_orders = {}
 	for i in {o[0] for o in res}:
 			my_orders[i] = Order()
 	for r in res:
 		my_orders[r[0]].ordNum = r[0]
-		my_orders[r[0]].items.append(OrderItem(r[1],r[2],r[3]))
+		my_orders[r[0]].items.append(OrderItem(r[1],r[2],r[3],r[7]))
 		my_orders[r[0]].date = r[4]
 		my_orders[r[0]].prepared = int(r[5])
 		my_orders[r[0]].delivered = int(r[6])
 	#print(my_orders)
-	return render_template("customer_dashboard.html", user=cust, my_orders=my_orders, menu=items)
+	return render_template("customer_dashboard.html", user=cust, my_orders=my_orders, menu=items, subtotal=sum(order.total() for order in my_orders.values()))
 
 
 
