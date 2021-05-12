@@ -122,14 +122,7 @@
                             <td class="text-center align-middle p-xl-3">{{ employee[1] }}</td>
                             <td class="text-center align-middle p-xl-3">{{ employee[2] }}</td>
                             <td class="text-center align-middle p-xl-3">{{ employee[3] }}</td>
-
-                            {% if employee[4]== 0 %}
-                            <td class="text-center align-middle p-xl-3">Manager</td>
-                            {% elif employee[4]== 1 %}
-                            <td class="text-center align-middle p-xl-3">Waiter</td>
-                            {% else %}
-                            <td class="text-center align-middle p-xl-3">Chef</td>
-                            {% endif %}
+                            <td class="text-center align-middle p-xl-3">{{ ["Manager", "Waiter", "Chef"][employee[4]] }}</td>
                             <td class="text-center align-middle p-xl-3">
                                 <a class="text-warning fw-bold" href="" data-bs-toggle="modal" onclick="showConfirmDialog('{{ employee[2] }}')"
                                     data-bs-target="#confirmDeleteModal">

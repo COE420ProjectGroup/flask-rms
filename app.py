@@ -385,13 +385,7 @@ def addEmployee():
 	userName = request.json['uname']
 	pwd = md5(request.json['pwd'].encode()).hexdigest()
 	email = request.json['email']
-	userType = request.json['userType']
-	if userType=="Chef" :
-		userType = 2
-	elif userType=="Waiter" :
-		userType = 1
-	else:
-		userType = 0
+	userType = ["Manager", "Waiter", "Chef"].index(request.json['userType'])
 	connection = cx_Oracle.connect("b00079866/b00079866@coeoracle.aus.edu:1521/orcl")
 	cur = connection.cursor()
 	res = cur.execute("insert into remployeeaccounts (fname, lname, username, password, email, type) values ('{}','{}','{}','{}','{}',{})".format(fname, lname, userName, pwd, email, userType))
