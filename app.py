@@ -89,7 +89,7 @@ def customer():
 		return redirect(url_for('register'))
 	connection = cx_Oracle.connect("b00079866/b00079866@coeoracle.aus.edu:1521/orcl")
 	cur = connection.cursor()
-	res = cur.execute("select * from rmenu order by type desc")
+	res = cur.execute("select * from rmenu where avail = 1 order by type desc")
 	items = [MenuItem(*i) for i in res]
 	#print(items)
 	custID = sessions[request.cookies['sessionID']].custID
