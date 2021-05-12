@@ -105,34 +105,37 @@
             <div class="card-header text-primary h5 p-3">Manage Employee Accounts</div>
             <div class="card-body">
                 <div class="table-responsive">
-                    <table class="table">
+                    <table class="table w-100">
                         <thead class="table-light">
                             <tr>
-                                <th>First Name</th>
-                                <th>Last Name</th>
-                                <th>Username</th>
-                                <th>Email</th>
-                                <th>Type</th>
-                                <th>Actions</th>
+                                <th class="text-center align-middle p-xl-3">First Name</th>
+                                <th class="text-center align-middle p-xl-3">Last Name</th>
+                                <th class="text-center align-middle p-xl-3">Username</th>
+                                <th class="text-center align-middle p-xl-3">Email</th>
+                                <th class="text-center align-middle p-xl-3">Type</th>
+                                <th class="text-center align-middle p-xl-3">Actions</th>
                             </tr>
                         </thead>
                         {% for employee in employeeAccounts %}
                         <tr>
-                            <td>{{ employee[0] }}</td>
-                            <td>{{ employee[1] }}</td>
-                            <td>{{ employee[2] }}</td>
-                            <td>{{ employee[3] }}</td>
+                            <td class="text-center align-middle p-xl-3">{{ employee[0] }}</td>
+                            <td class="text-center align-middle p-xl-3">{{ employee[1] }}</td>
+                            <td class="text-center align-middle p-xl-3">{{ employee[2] }}</td>
+                            <td class="text-center align-middle p-xl-3">{{ employee[3] }}</td>
 
                             {% if employee[4]== 0 %}
-                            <td>Manager</td>
+                            <td class="text-center align-middle p-xl-3">Manager</td>
                             {% elif employee[4]== 1 %}
-                            <td>Waiter</td>
+                            <td class="text-center align-middle p-xl-3">Waiter</td>
                             {% else %}
-                            <td>Chef</td>
+                            <td class="text-center align-middle p-xl-3">Chef</td>
                             {% endif %}
-                            <td>
+                            <td class="text-center align-middle p-xl-3">
                                 <a class="text-warning fw-bold" href="" data-bs-toggle="modal" onclick="showConfirmDialog('{{ employee[2] }}')"
-                                    data-bs-target="#confirmDeleteModal">Delete</a>
+                                    data-bs-target="#confirmDeleteModal">
+                                    <span class="material-icons align-middle">delete</span>
+                                    Delete
+                                </a>
                             </td>
                         </tr>
                         {% endfor %}
