@@ -128,7 +128,10 @@ def dashboard():
 		cur = connection.cursor()
 		employeeAccounts = cur.execute("select fname, lname, username, email, type from remployeeaccounts")
 		employeeAccounts = list(employeeAccounts)
-		return render_template("manager_dashboard.html", user=emp, employeeAccounts=employeeAccounts)
+		cur = connection.cursor()
+		res = cur.execute("select tablecode from rcustomer where tablecode is not null and paymentCompletedBy is NULL")
+		bookedTables = [r[0] for r in res]
+		return render_template("manager_dashboard.html", user=emp, employeeAccounts=employeeAccounts, bookedTables=bookedTables)
 	elif emp.type == 1:
 		connection = cx_Oracle.connect("b00079866/b00079866@coeoracle.aus.edu:1521/orcl")
 		cur = connection.cursor()
