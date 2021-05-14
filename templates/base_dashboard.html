@@ -13,18 +13,111 @@
     <link rel="icon" type="image/png" href="{{ url_for('static', filename='images/favicon.png') }}" />
 
     <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js"
-    integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n"
-    crossorigin="anonymous"></script>
-<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"
-    integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo"
-    crossorigin="anonymous"></script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/js/bootstrap.bundle.min.js"
-    integrity="sha384-JEW9xMcG8R+pH31jmWH6WWP0WintQrMb4s7ZOdauHnUtxwoG2vI5DkLtS3qm9Ekf"
-    crossorigin="anonymous"></script>
+        integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n"
+        crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"
+        integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo"
+        crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-JEW9xMcG8R+pH31jmWH6WWP0WintQrMb4s7ZOdauHnUtxwoG2vI5DkLtS3qm9Ekf"
+        crossorigin="anonymous"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 </head>
 
 <body>
+
+    {% if request.endpoint != 'customer' %}
+
+    <div class="modal fade" id="successModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title h4 success-title"></h5>
+                </div>
+                <div class="modal-body">
+                    <p id="success-msg"></p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-light" data-bs-dismiss="modal">OK</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="changePasswordModal" tabindex="-1" aria-labelledby="changePasswordModal">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title h5 text-primary" id="exampleModalLabel">Change your password</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form method="POST" id="passwordForm">
+                    <div class="modal-body text-center">
+                        <div class="col-md">
+                            <label for="currpassword" class="form-label">Current Password</label>
+                            <input type="password" class="form-control" id="currpwd" placeholder="Password"
+                                name="currpwd" required>
+                        </div>
+                        <div class="col-md">
+                            <label for="newpassword" class="form-label">New Password</label>
+                            <input type="password" class="form-control" id="newpwd" placeholder="" name="newpwd"
+                                required>
+                        </div>
+                        <div class="col-md">
+                            <label for="confpassword" class="form-label">Confirm Password</label>
+                            <input type="password" class="form-control" id="confpwd" placeholder="" name="confpwd"
+                                required>
+                        </div>
+                    </div>
+
+                    <div class="modal-footer text-center">
+                        <a class="btn btn-secondary" href="" data-bs-dismiss="modal">Cancel</a>
+                        <a class="btn btn-primary w-75 text-white" href="" data-bs-dismiss="modal"
+                            data-bs-target="#successModal" data-bs-toggle="modal" onclick="changePassword();">
+                            Change Password
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <script type="text/javascript">
+        function changePassword() {
+            var xhr = new XMLHttpRequest();
+            var data = $('#passwordForm').serializeArray().reduce(function (obj, item) {
+                obj[item.name] = item.value;
+                return obj;
+            }, {});
+            console.log(data)
+            xhr.onreadystatechange = function () {
+                if (xhr.readyState == XMLHttpRequest.DONE && xhr.status == 200) {
+                    $('.success-title').html('Change Successful')
+                    $("#success-msg").html('Password changed successfully.');
+                }
+                else {
+                    $('.success-title').html('Error')
+                    $("#success-msg").html('Change unsuccessful.');
+                }
+            }
+            // $.post('/changePassword', data)
+            //     .done(function (response) {
+            //         console.log(response);
+            //         if (response === 'success') {
+            //             $('#success-title').html('Error')
+            //             $("#success-msg").html('Change unsuccessful.');
+            //         }
+            //         else {
+            //             $('#success-title').html('Change Successful')
+            //             $("#success-msg").html('Password changed successfully.');
+            //         }
+            //     });
+            xhr.open("POST", '/changePassword', true);
+            xhr.setRequestHeader('Content-Type', 'application/json');
+            xhr.send(JSON.stringify(data));
+        }
+    </script>
+    {% endif %}
+
     <nav class="navbar navbar-expand-lg shadow-sm">
         <a class="navbar-brand h1" href="{{ url_for('index') }}">Khidma</a>
 
@@ -42,7 +135,7 @@
                         Edit Profile
                     </a>
                 </li>
-                <li><a class="dropdown-item" href="#">
+                <li><a class="dropdown-item" href="" data-bs-toggle="modal" data-bs-target="#changePasswordModal">
                         <span class="material-icons align-middle">password</span>
                         Change Password
                     </a>
@@ -58,10 +151,8 @@
     </nav>
 
     {% block content %}
-        
+
     {% endblock content %}
-    
-   
 
 </body>
 
