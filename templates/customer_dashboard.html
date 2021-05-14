@@ -1,10 +1,79 @@
 {% extends 'base_dashboard.html' %}
 {% block content %}
+
+
+<div class="modal fade" id="paymentMethod" tabindex="-1" aria-labelledby="paymentMethod">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+
+            <div class="modal-header">
+                <h5 class="modal-title h4 text-primary">Select a payment method</h5>
+                <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                  </button>
+            </div>
+
+            <div class="modal-body">
+                <div class="text-center">
+                    <a type="button" class="btn btn-light text-primary w-50" data-bs-dismiss="modal" href="#" data-bs-toggle="modal" data-bs-target="#ccDetails""><span class="material-icons align-middle">credit_card</span>&nbsp;Card</a>
+                </div>
+                <br>
+                <div class="text-center">
+                    <a type="button" class="btn btn-light text-primary w-50" data-bs-dismiss="modal" onclick="alert('cash')"><span class="material-icons align-middle">payments</span>&nbsp;Cash</a>
+                </div>
+                <br>
+                
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="ccDetails" tabindex="-1" aria-labelledby="ccDetailsLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title h5 text-primary" id="exampleModalLabel">Enter card details</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body text-center">
+                <form method = "POST" id=ccform>
+                    <div class="col-md">
+                        <label for="name" class="form-label">Name on card</label>
+                        <input type="text" class="form-control" id="name" placeholder="John Smith" name="name" value="{{user.fname+' '+user.lname}}" required>
+                    </div>
+                    <div class="col-md">
+                        <label for="number" class="form-label">Card number</label>
+                        <input type="text" class="form-control" id="number" placeholder="xxxx-xxxx-xxxx-xxxx" name="number" required>
+                    </div>
+                    <div class="col-md">
+                        <label for="cvv" class="form-label">CVV</label>
+                        <input type="password" class="form-control" id="cvv" placeholder="***" name="cvv" required>
+                    </div>
+                    <div class="col-md">
+                        <label for="exp" class="form-label">Expiry Date</label>
+                        <input type="text" onfocus="(this.type='month')"  class="form-control" id="exp" placeholder="MM/YY" name="exp" required>
+                    </div>
+                </form>
+
+                    <div class="modal-footer text-center">
+                        <button class="btn btn-primary w-100" data-bs-dismiss="modal" onclick="pay()">
+                            Complete Payment
+                        </button>
+                    </div>
+                
+            </div>
+                
+
+        </div>
+    </div>
+</div>
+
 <main class="dashboard">
     <nav class="nav nav-tabs nav-pills flex-column text-center p-4">
         <h4 class="h2 py-3 py-xl-5">Dashboard</h4>
 
-        <button class="fs-5 pr-2 nav-link active" data-bs-toggle="tab" href="#featured" data-bs-target="#featured" type="button" role="tab">
+        <button class="fs-5 pr-2 nav-link active" data-bs-toggle="tab" href="#featured" data-bs-target="#featured" type="button" role="tab" id="menuButton">
             <span class="material-icons align-middle">restaurant_menu</span>
             Menu
         </button>
@@ -15,7 +84,7 @@
         </button>
         <button style="white-space: nowrap;" class="fs-5 pr-2 nav-link" data-bs-toggle="tab" href="#payment"
             data-bs-target="#payment" type="button" role="tab">
-            <span class="material-icons align-middle">credit_card</span>
+            <span class="material-icons align-middle">attach_money</span>
             Payment
         </button>
 
@@ -182,15 +251,48 @@
             </div>
             <br>
             <div class="text-center">
-                <a class="btn btn-primary text-light w-50" onclick="">Pay Now</a>
+                <a class="btn btn-primary text-light w-50" href="#" data-bs-toggle="modal" data-bs-target="#paymentMethod">Pay Now</a>
             </div>
         </section>
-
     </div>
-
 </main>
 
 <script>
+
+    function pay(){
+        // console.log('in pay');
+        document.getElementById("menuButton").disabled = true;
+        var xhr = new XMLHttpRequest();
+        xhr.open("POST", "/pay", true);
+        xhr.onreadystatechange = function() {
+            if (this.readyState == 4 && this.status == 200) {
+                
+                document.getElementById("payment").innerHTML =
+                `
+                <h3>Payment Complete</h3>
+                <div class="card card-deck py-4 px-3">
+                    <div class="card p-3">
+                    <strong class="card-title">Thank you for dining at Khidma!</strong>
+                    <div class="card-body">
+                        Transaction successful. Please show the QR code below to the staff, if they ask for payment confirmation:
+                        <br><br>
+                        <div style="text-align: center;">
+                        <img src="${this.responseText}">
+                        </div>
+                        <br><br>
+                        Leave us a review on <a href="https://www.youtube.com/watch?v=dQw4w9WgXcQ" target="_blank"><span class="material-icons align-middle">facebook</span></a>&nbsp;to get 10% off on your next visit!*
+                        <br>
+                        <div style="font-size:0.5em!important;">*T&C apply</div>
+                    </div>
+                    </div>
+
+
+                </div>
+            `;
+            }
+        };
+        xhr.send();
+    }
 
 
     var intervalId = setInterval(function() {
@@ -259,11 +361,28 @@
 
         setTimeout(function() {
             $('#order_status').load(document.URL +  ' #order_status');
-            $('#payment').load(document.URL +  ' #payment');
+            $('#payment').load(document.URL +  ' #payment'); // payments tab only needs to be updated whenever Place Order is clicked
         }, 500);
 
         $('.nav-tabs button[href="#order_status"]').tab('show'); // auto tab switch to order status
         // alert('done');
     }
+
+        // enable spacing for credit card number     
+    $('#number').on('keyup', function(e){         
+    var val = $(this).val();         
+    var newval = '';         
+    val = val.replace(/\s/g, ''); 
+
+    // iterate to letter-spacing after every 4 digits   
+    for(var i = 0; i < val.length; i++) {             
+        if(i%4 == 0 && i > 0) newval = newval.concat(' ');             
+        newval = newval.concat(val[i]);         
+    }        
+
+    // format in same input field 
+    $(this).val(newval);     
+    }); 
+
 </script>
 {% endblock content %}

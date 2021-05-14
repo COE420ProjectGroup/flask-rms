@@ -3,6 +3,7 @@ from hashlib import md5, sha256
 import cx_Oracle
 from os import urandom
 from datetime import datetime as dt
+import urllib
 
 sessions = {}
 app = Flask(__name__)
@@ -316,6 +317,21 @@ def place():
 
 	#print(request.json, request.cookies)
 	return 'success'
+
+
+@app.route("/pay", methods = ['POST'])
+def pay():
+	global sessions
+	if getType(request.cookies) != 3:
+		return redirect(url_for('index'))
+
+	custID = sessions[request.cookies['sessionID']].custID
+	connection = cx_Oracle.connect("b00079866/b00079866@coeoracle.aus.edu:1521/orcl")
+	cur = connection.cursor()
+	res = cur.execute(f"update rcustomer set paymentCompletedBy = 'm1' where custID = {custID}") # pay by cc -> completed by manager
+	connection.commit()
+	qrdata = f"{{'custID': '{custID}', 'confirmationCode': 'YupTheyReallyPaid',  'source': 'Dude trust me'}}"
+	return f"https://api.qrserver.com/v1/create-qr-code/?size=250x250&data={urllib.parse.quote_plus(qrdata)}&color=7f0fff"
 
 @app.route("/prepare", methods = ['POST'])
 def prepare():
