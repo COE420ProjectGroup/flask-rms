@@ -331,6 +331,7 @@
                 }
 
                 else if (xhr.readyState == 4 && xhr.status == 401) {
+                    await new Promise(r => setTimeout(r, 2000));
                     xhr.open(method, '/requestPayment', true);
                     xhr.send();
                 }

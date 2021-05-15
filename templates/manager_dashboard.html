@@ -13,7 +13,8 @@
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancel</button>
-                <a type="button" class="btn btn-danger text-white" data-bs-dismiss="modal" onclick="delEmployee(''+$('#empname').html(), '/delEmployee')">Delete</a>
+                <a type="button" class="btn btn-danger text-white" data-bs-dismiss="modal"
+                    onclick="delEmployee(''+$('#empname').html(), '/delEmployee')">Delete</a>
             </div>
         </div>
     </div>
@@ -31,7 +32,8 @@
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancel</button>
-                <a type="button" class="btn btn-danger text-white" data-bs-dismiss="modal" onclick="changeAvail(''+$('#changeAvail').html())">Proceed</a>
+                <a type="button" class="btn btn-danger text-white" data-bs-dismiss="modal"
+                    onclick="changeAvail(''+$('#changeAvail').html())">Proceed</a>
             </div>
         </div>
     </div>
@@ -90,8 +92,7 @@
     </div>
 </div>
 
-<div class="modal fade" id="addItemModal" tabindex="-1" aria-labelledby="addItemModalLabel"
-    aria-hidden="true">
+<div class="modal fade" id="addItemModal" tabindex="-1" aria-labelledby="addItemModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
         <div class="modal-content">
             <div class="modal-header">
@@ -106,7 +107,8 @@
                     </div>
                     <div class="col-md">
                         <label for="description" class="form-label">Description</label>
-                        <input type="text" class="form-control" id="desc" placeholder="Description of the item" name="desc" required>
+                        <input type="text" class="form-control" id="desc" placeholder="Description of the item"
+                            name="desc" required>
                     </div>
                     <div class="col-md">
                         <label for="price" class="form-label">Price</label>
@@ -114,7 +116,8 @@
                     </div>
                     <div class="col-md">
                         <label for="imgurl" class="form-label">Image URL (.jpg files only)</label>
-                        <input type="text" class="form-control" id="imgurl" placeholder="https://i.imgur.com/H3ebp2F.jpeg" name="imgurl" required>
+                        <input type="text" class="form-control" id="imgurl"
+                            placeholder="https://i.imgur.com/H3ebp2F.jpeg" name="imgurl" required>
                     </div>
                     <div class="form-group">
                         <label for="itemType">Type</label>
@@ -122,15 +125,14 @@
                             <option>Main Course</option>
                             <option>Starter</option>
                             <option>Dessert</option>
-			                <option>Beverage</option>
+                            <option>Beverage</option>
                         </select>
                     </div>
                 </div>
 
                 <div class="modal-footer text-center">
                     <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cancel</button>
-                    <button class="btn btn-primary w-75" type="submit" data-bs-dismiss="modal"
-                        onclick="addItem()">
+                    <button class="btn btn-primary w-75" type="submit" data-bs-dismiss="modal" onclick="addItem()">
                         Add Item
                     </button>
                 </div>
@@ -190,9 +192,11 @@
                             <td class="text-center align-middle p-xl-3">{{ employee[1] }}</td>
                             <td class="text-center align-middle p-xl-3">{{ employee[2] }}</td>
                             <td class="text-center align-middle p-xl-3">{{ employee[3] }}</td>
-                            <td class="text-center align-middle p-xl-3">{{ ["Manager", "Waiter", "Chef"][employee[4]] }}</td>
+                            <td class="text-center align-middle p-xl-3">{{ ["Manager", "Waiter", "Chef"][employee[4]] }}
+                            </td>
                             <td class="text-center align-middle p-xl-3">
-                                <a class="text-warning fw-bold" href="" data-bs-toggle="modal" onclick="showConfirmDialog('{{ employee[2] }}')"
+                                <a class="text-warning fw-bold" href="" data-bs-toggle="modal"
+                                    onclick="showConfirmDialog('{{ employee[2] }}')"
                                     data-bs-target="#confirmDeleteModal">
                                     <span class="material-icons align-middle">delete</span>
                                     Delete
@@ -234,32 +238,37 @@
                         {% for item in menu %}
                         <tr>
                             <td class="text-center align-middle p-xl-3">{{ item.name }}</td>
-                            <td class="text-center align-middle p-xl-3"><div contenteditable id="descrCont{{item.id}}">{{ item.desc }}</div></td>
-                            <td class="text-center align-middle p-xl-3"><div contenteditable id="priceCont{{item.id}}">{{ '%.2f' % item.price }}</div></td>
-                            <td class="text-center align-middle p-xl-3">{{ {"m": "Main Course", "s": "Starter", "d": "Dessert", "b": "Beverage"}[item.type] }}</td>
+                            <td class="text-center align-middle p-xl-3">
+                                <div contenteditable id="descrCont{{item.id}}">{{ item.desc }}</div>
+                            </td>
+                            <td class="text-center align-middle p-xl-3">
+                                <div contenteditable id="priceCont{{item.id}}">{{ '%.2f' % item.price }}</div>
+                            </td>
+                            <td class="text-center align-middle p-xl-3">{{ {"m": "Main Course", "s": "Starter", "d":
+                                "Dessert", "b": "Beverage"}[item.type] }}</td>
                             <td class="text-center align-middle p-xl-3">
                                 <a href='javascript:;' onclick="toggleAvail('availCont{{item.id}}')">
                                     <div id="availCont{{item.id}}">
                                         {% if item.avail == 1 %}
                                         <span class="material-icons align-middle" style="color: green;font-size:250%;">
-                                        toggle_on
+                                            toggle_on
                                         </span>
                                         {% else %}
                                         <span class="material-icons align-middle" style="color: red;font-size:250%;">
-                                        toggle_off
+                                            toggle_off
                                         </span>
                                         {% endif %}
                                         {{ ["Unavailable", "Available"][item.avail] }}
-                                        </div>
+                                    </div>
                                 </a>
                             </td>
                             <td class="text-center align-middle p-xl-3">
-                                <a class="text-warning fw-bold" href="" data-bs-toggle="modal" onclick="showConfirmAvail('{{ item.id }}')"
-                                        data-bs-target="#confirmAvailModal">
-                                        <span class="material-icons align-middle">
-                                            update
-                                        </span>
-                                        Update
+                                <a class="text-warning fw-bold" href="" data-bs-toggle="modal"
+                                    onclick="showConfirmAvail({{ item.id }})" data-bs-target="#confirmAvailModal">
+                                    <span class="material-icons align-middle">
+                                        update
+                                    </span>
+                                    Update
                                 </a>
                             </td>
                         </tr>
@@ -268,8 +277,7 @@
                 </div>
                 <br>
                 <div class="text-center">
-                    <a href="#" data-bs-toggle="modal" data-bs-target="#addItemModal"
-                        class="btn btn-primary w-50">
+                    <a href="#" data-bs-toggle="modal" data-bs-target="#addItemModal" class="btn btn-primary w-50">
                         <span class="material-icons align-middle">library_add</span>&emsp;
                         Add Item
                     </a>
@@ -320,32 +328,72 @@
         <div class="card border-primary mb-3 tab-pane fade" role="tabpanel" id="sales_history">
             <div class="card-header text-primary h5 p-3">Sales History</div>
             <div class="card-body">
-                <div class="card-deck">
-                    <div class="row g-3 align-items-center">
-                        <div class="col-auto">
-                            <label for="" class="">Select Date Range: </label>
-                        </div>
-                        <div class="col-auto">
-                            <input type="text" class="form-control" name="datefilter" value="" placeholder="Click here to select Date Range" />
-                        </div>
+                <div class="row g-3 align-items-center">
+                    <div class="col-auto">
+                        <label for="" class="">Select Date Range: </label>
                     </div>
-                </div>
-                <br>
-                <br>
-                <div class="card-deck">
-                    <div class="table-responsive">
-                        <p  id="showData"></p>
+                    <div class="col-auto">
+                        <input type="text" class="form-control" name="datefilter" value=""
+                            placeholder="Click here to select Date Range" />
                     </div>
-                
                 </div>
             </div>
+            <br>
+            <br>
+            <div class="card">
+                <div class="table-responsive">
+                    <p class="table-light" id="showData"></p>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md card bg-primary p-5 ml-md-3 mr-md-3 mx-s-3">
+                    <strong class="card-title text-white">
+                        Sales made today
+                    </strong>
+                    <div class="card-body text-secondary fs-3">
+                        {{ todaysales }}
+                    </div>
+                </div>
+                <div class="col-md card bg-primary p-5 mr-md-3 mx-s-3">
+                    <strong class="card-title text-white">
+                        Orders made today
+                    </strong>
+                    <div class="card-body text-secondary fs-3">
+                        {{ todayorders }}
+                    </div>
+                </div>
+                <div class="col-md card bg-primary p-5 mr-md-3 mx-s-3">
+                    <strong class="card-title text-white">
+                        Most ordered item
+                    </strong>
+                    <div class="card-body text-secondary fs-3">
+                        {{ mostordered }}
+                    </div>
+                </div>
+            </div>
+            <div class="row p-xl-5 table-responsive">
+                <div class="table" id="chart"></div>
+            </div>
         </div>
+    </div>
 
     </div>
-</main>
-<script>
 
-    function addItem(){
+
+</main>
+<script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+<script type="text/javascript">
+    var graphs = {{ graphJSON | safe}};
+    Plotly.plot('chart', graphs, {}, { responsive: true });
+
+    // window.onresize = function() {
+    // Plotly.relayout('chart', {
+    //     'xaxis.autorange': true,
+    //     'yaxis.autorange': true
+    // });
+
+
+    function addItem() {
         var xhr = new XMLHttpRequest();
         var data = $('#newItemForm').serializeArray().reduce(function (obj, item) {
             obj[item.name] = item.value;
@@ -361,9 +409,9 @@
         }, 500);
     }
 
-    function toggleAvail(id){
-        
-        if(document.getElementById(id).innerHTML.includes("toggle_on")){
+    function toggleAvail(id) {
+
+        if (document.getElementById(id).innerHTML.includes("toggle_on")) {
             document.getElementById(id).innerHTML = `
             <span class="material-icons align-middle" style="color: green;font-size:250%;">
                 toggle_off
@@ -371,7 +419,7 @@
             Unavailable
             `;
         }
-        else{
+        else {
             document.getElementById(id).innerHTML = `
             <span class="material-icons align-middle" style="color: green;font-size:250%;">
                 toggle_on
@@ -381,14 +429,14 @@
         }
     }
 
-    function changeAvail(itemID){ // I should rename this
+    function changeAvail(itemID) { // I should rename this
         // console.log(itemID);
         var xhr = new XMLHttpRequest();
-        var data = { "itemID": itemID, "desc": document.getElementById("descrCont"+itemID).innerHTML, "price": document.getElementById("priceCont"+itemID).innerHTML};
-        if(document.getElementById("availCont"+itemID).innerHTML.includes("toggle_on")){
+        var data = { "itemID": itemID, "desc": document.getElementById("descrCont" + itemID).innerHTML, "price": document.getElementById("priceCont" + itemID).innerHTML };
+        if (document.getElementById("availCont" + itemID).innerHTML.includes("toggle_on")) {
             data["avail"] = 1;
         }
-        else{
+        else {
             data["avail"] = 0;
         }
         // console.log(data);
@@ -400,7 +448,7 @@
             $('#customize_menu').load(document.URL + ' #customize_menu');
         }, 500);
     }
-    function showConfirmAvail(itemID){
+    function showConfirmAvail(itemID) {
         $('#changeAvail').html(itemID);
     }
 
@@ -439,25 +487,25 @@
 
     }
 
-    function dateRangeSender(startDate,endDate, url) {
+    function dateRangeSender(startDate, endDate, url) {
         var xhr = new XMLHttpRequest();
-        var data = { "startDate": startDate,"endDate": endDate };
+        var data = { "startDate": startDate, "endDate": endDate };
         xhr.open("POST", url, true);
         xhr.setRequestHeader('Content-Type', 'application/json');
-        
+
         xhr.onreadystatechange = function () {
             if (this.readyState == 4 && this.status == 200) {
                 CreateTableFromJSON(JSON.parse(this.responseText))
 
             }
         };
-       
+
         xhr.send(JSON.stringify(data));
-       
-  
+
+
 
     }
-    $(function() {
+    $(function () {
 
         $('input[name="datefilter"]').daterangepicker({
             autoUpdateInput: false,
@@ -466,12 +514,12 @@
             }
         });
 
-        $('input[name="datefilter"]').on('apply.daterangepicker', function(ev, picker) {
+        $('input[name="datefilter"]').on('apply.daterangepicker', function (ev, picker) {
             $(this).val(picker.startDate.format('DD/MM/YYYY') + ' - ' + picker.endDate.format('DD/MM/YYYY'));
-            dateRangeSender(picker.startDate.format('DD/MM/YYYY'),picker.endDate.format('DD/MM/YYYY'),'/salesHistory')
+            dateRangeSender(picker.startDate.format('DD/MM/YYYY'), picker.endDate.format('DD/MM/YYYY'), '/salesHistory')
         });
 
-        $('input[name="datefilter"]').on('cancel.daterangepicker', function(ev, picker) {
+        $('input[name="datefilter"]').on('cancel.daterangepicker', function (ev, picker) {
             $(this).val('');
         });
 
@@ -491,7 +539,7 @@
         }
 
         // CREATE DYNAMIC TABLE.
-        var table = document.createElement("table") ;
+        var table = document.createElement("table");
         table.className = "table w-100";
         // CREATE HTML TABLE HEADER ROW USING THE EXTRACTED HEADERS ABOVE.
 

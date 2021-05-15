@@ -3,9 +3,11 @@ from hashlib import md5, sha256
 import cx_Oracle
 from os import urandom
 from datetime import datetime as dt
+import datetime
 import urllib
 import requests
 import json
+import plotly
 
 sessions = {}
 app = Flask(__name__)
@@ -140,7 +142,37 @@ def dashboard():
         cur = connection.cursor()
         res = cur.execute("select * from rmenu")
         menu = [MenuItem(*i) for i in res]
-        return render_template("manager_dashboard.html", user=emp, employeeAccounts=employeeAccounts, bookedTables=bookedTables, menu=menu)
+        query = ("select ord.o_date, sum(det.qty * mn.price) "
+        "from RORDERDETAILS det, RORDERS ord, RMENU mn "
+        "where ord.o_date between SYSDATE-7 and SYSDATE "
+        "and det.ordernum = ord.ordernum "
+        "and det.itemid = mn.itemid "
+        "group by ord.o_date")
+        res = cur.execute(query)
+        saleshistory = dict([(date.strftime("%d %B, %Y"), amount) for date, amount in list(res)])
+        dates = [(dt.today() - datetime.timedelta(days = day)).strftime("%d %B, %Y") for day in range(7)][::-1]
+        # datevalueavailable = [date for date, s in saleshistory]
+        sales = [saleshistory[d] if d in saleshistory.keys() else 0 for d in dates]
+        graphs = dict(
+            data=[
+                dict(
+                    x=dates,
+                    y=sales,
+                    marker = dict(color=['rgb(127, 15, 255)',]*7),
+                    type='bar'
+                ),
+            ],
+            layout=dict(
+                title='This week\'s Sales',
+                autosize=True
+            )
+        )
+        graphJSON = json.dumps(graphs, cls=plotly.utils.PlotlyJSONEncoder)
+        res = cur.execute('select count(*) from rorders where trunc(o_date) = trunc(sysdate)')
+        todayorders = list(res)[0][0]
+        res = cur.execute("select mn.name, sum(det.qty) from rorderdetails det, rmenu mn where mn.itemid = det.itemid group by mn.name")
+        ordered = dict(res)
+        return render_template("manager_dashboard.html", user=emp, employeeAccounts=employeeAccounts, bookedTables=bookedTables,menu=menu, todaysales=sales[-1], graphJSON=graphJSON, todayorders=todayorders, mostordered=max(ordered, key=ordered.get))
     elif emp.type == 1:
         connection = cx_Oracle.connect("b00079866/b00079866@coeoracle.aus.edu:1521/orcl")
         cur = connection.cursor()
