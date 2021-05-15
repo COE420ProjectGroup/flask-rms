@@ -78,10 +78,12 @@
                     {% if i in bookedTables %}
                     <div class="card bg-primary text-light p-3">
                         <strong class="card-title">Table {{i}}</strong>
+                        <div class="d-flex justify-content-between">
                         <p>Booked</p>
                         {% if i in payReq %}
                         <a href="javascript:attend({{i}});" data-bs-toggle="tooltip" title="Cash payment requested"><span class="material-icons align-middle" style="color: white;">payments</span></a>
                         {% endif %}
+                        </div>
                     </div>
                     {% else %}
                     <div class="card bg-light text-primary p-3">
@@ -98,10 +100,12 @@
                     {% if i in bookedTables %}
                     <div class="card bg-primary text-light p-3">
                         <strong class="card-title">Table {{i}}</strong>
+                        <div class="d-flex justify-content-between">
                         <p>Booked</p>
                         {% if i in payReq %}
                         <a href="javascript:attend({{i}});" data-bs-toggle="tooltip" title="Cash payment requested"><span class="material-icons align-middle" style="color: white;">payments</span></a>
                         {% endif %}
+                        </div>
                     </div>
                     {% else %}
                     <div class="card bg-light text-primary p-3">

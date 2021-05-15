@@ -334,9 +334,13 @@ def requestPayment():
     connection.commit()
     cur = connection.cursor()
     res = cur.execute(f"select fname from remployeeaccounts where username in (select paymentCompletedBy from rcustomer where custID = {custID})")
-    waiter = list(res)[0][0] if list(res) else None
-
-    return waiter if waiter else 'None'
+    waiter = None
+    try:
+        waiter = list(res)[0][0]
+    except IndexError:
+        waiter = None
+    qrdata = f"{{'custID': '{custID}', 'confirmationCode': 'YupTheyReallyPaid',  'source': 'Just ask {waiter}'}}" if waiter else None
+    return (f"https://api.qrserver.com/v1/create-qr-code/?size=250x250&data={urllib.parse.quote_plus(qrdata)}&color=7f0fff", 200) if waiter else ('None', 401)
 
 @app.route("/pay", methods = ['POST'])
 def pay():

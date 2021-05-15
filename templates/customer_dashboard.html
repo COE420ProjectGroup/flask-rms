@@ -10,19 +10,23 @@
                 <h5 class="modal-title h4 text-primary">Select a payment method</h5>
                 <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
-                  </button>
+                </button>
             </div>
 
             <div class="modal-body">
                 <div class="text-center">
-                    <a type="button" class="btn btn-light text-primary w-50" data-bs-dismiss="modal" href="#" data-bs-toggle="modal" data-bs-target="#ccDetails""><span class="material-icons align-middle">credit_card</span>&nbsp;Card</a>
+                    <a type="button" class="btn btn-light text-primary w-50" data-bs-dismiss="modal" href="#"
+                        data-bs-toggle="modal" data-bs-target="#ccDetails"><span
+                            class="material-icons align-middle">credit_card</span>&nbsp;Card</a>
                 </div>
                 <br>
                 <div class="text-center">
-                    <a type="button" class="btn btn-light text-primary w-50" data-bs-dismiss="modal" onclick="requestPayment()"><span class="material-icons align-middle">payments</span>&nbsp;Cash</a>
+                    <a type="button" class="btn btn-light text-primary w-50" data-bs-dismiss="modal"
+                        onclick="requestPayment()"><span
+                            class="material-icons align-middle">payments</span>&nbsp;Cash</a>
                 </div>
                 <br>
-                
+
             </div>
 
         </div>
@@ -37,14 +41,16 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body text-center">
-                <form method = "POST" id=ccform>
+                <form method="POST" id=ccform>
                     <div class="col-md">
                         <label for="name" class="form-label">Name on card</label>
-                        <input type="text" class="form-control" id="name" placeholder="John Smith" name="name" value="{{user.fname+' '+user.lname}}" required>
+                        <input type="text" class="form-control" id="name" placeholder="John Smith" name="name"
+                            value="{{user.fname+' '+user.lname}}" required>
                     </div>
                     <div class="col-md">
                         <label for="number" class="form-label">Card number</label>
-                        <input type="text" class="form-control" id="number" placeholder="xxxx-xxxx-xxxx-xxxx" name="number" required>
+                        <input type="text" class="form-control" id="number" placeholder="xxxx-xxxx-xxxx-xxxx"
+                            name="number" required>
                     </div>
                     <div class="col-md">
                         <label for="cvv" class="form-label">CVV</label>
@@ -52,18 +58,19 @@
                     </div>
                     <div class="col-md">
                         <label for="exp" class="form-label">Expiry Date</label>
-                        <input type="text" onfocus="(this.type='month')"  class="form-control" id="exp" placeholder="MM/YY" name="exp" required>
+                        <input type="text" onfocus="(this.type='month')" class="form-control" id="exp"
+                            placeholder="MM/YY" name="exp" required>
                     </div>
                 </form>
 
-                    <div class="modal-footer text-center">
-                        <button class="btn btn-primary w-100" data-bs-dismiss="modal" onclick="pay()">
-                            Complete Payment
-                        </button>
-                    </div>
-                
+                <div class="modal-footer text-center">
+                    <button class="btn btn-primary w-100" data-bs-dismiss="modal" onclick="pay()">
+                        Complete Payment
+                    </button>
+                </div>
+
             </div>
-                
+
 
         </div>
     </div>
@@ -73,7 +80,8 @@
     <nav class="nav nav-tabs nav-pills flex-column text-center p-4">
         <h4 class="h2 py-3 py-xl-5">Dashboard</h4>
 
-        <button class="fs-5 pr-2 nav-link active" data-bs-toggle="tab" href="#featured" data-bs-target="#featured" type="button" role="tab" id="menuButton">
+        <button class="fs-5 pr-2 nav-link active" data-bs-toggle="tab" href="#featured" data-bs-target="#featured"
+            type="button" role="tab" id="menuButton">
             <span class="material-icons align-middle">restaurant_menu</span>
             Menu
         </button>
@@ -163,15 +171,20 @@
                                         <a class="btn p-0 fs-3" id="{{ item.type }}{{ item.id }}">0</a>
                                         <div class="btn-group flex-grow-1" type="button">
                                             <a class="btn btn-primary text-light flex-grow-1" type="button"
-                                            onclick="inc('{{ item.type }}{{ item.id }}');"><span
-                                                class="material-icons">add</span></a>
-                                            <button type="button" class="btn btn-primary text-light dropdown-toggle dropdown-toggle-split" id="dropdownMenuReference" data-bs-toggle="dropdown" aria-expanded="false" data-bs-reference="parent">
+                                                onclick="inc('{{ item.type }}{{ item.id }}');"><span
+                                                    class="material-icons">add</span></a>
+                                            <button type="button"
+                                                class="btn btn-primary text-light dropdown-toggle dropdown-toggle-split"
+                                                id="dropdownMenuReference" data-bs-toggle="dropdown"
+                                                aria-expanded="false" data-bs-reference="parent">
                                                 <span class="visually-hidden">Toggle Dropdown</span>
                                             </button>
-                                            <div class="dropdown-menu p-3 form-floating" aria-labelledby="dropdownMenuExtraInfo">
+                                            <div class="dropdown-menu p-3 form-floating"
+                                                aria-labelledby="dropdownMenuExtraInfo">
                                                 <h6>Add Additional Details</label>
-                                                <textarea class="form-control" placeholder="Additional Details Here" id="{{ item.type }}{{ item.id }}_add_info"></textarea>
-                                              </div>
+                                                    <textarea class="form-control" placeholder="Additional Details Here"
+                                                        id="{{ item.type }}{{ item.id }}_add_info"></textarea>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
@@ -194,64 +207,71 @@
 
         </section>
         <section class="tab-pane in" role="tabpanel" id="order_status">
-            
+
             <h3>Orders</h3>
             <div class="card card-deck py-4 px-3">
 
                 {% for order in my_orders.values() %}
 
-                <div class="card bg-{{'light' if order.delivered == 0 else 'primary'}} text-{{'primary' if order.delivered == 0 else 'light'}} p-3">
-                    <strong class="card-title">Order {{order.ordNum}}<br>Placed: {{order.date.strftime('%H:%M:%S')}}</strong>
+                <div
+                    class="card bg-{{'light' if order.delivered == 0 else 'primary'}} text-{{'primary' if order.delivered == 0 else 'light'}} p-3">
+                    <strong class="card-title">Order {{order.ordNum}}<br>Placed:
+                        {{order.date.strftime('%H:%M:%S')}}</strong>
                     <ul class="card-body">
 
                         {% for item in order.items %}
-                            <li>{{item.name}}<br>&nbsp;&nbsp;x{{item.qty}}<br>&nbsp;&nbsp;{{item.addinfo if item.addinfo else '-'}}</li>
+                        <li>{{item.name}}<br>&nbsp;&nbsp;x{{item.qty}}<br>&nbsp;&nbsp;{{item.addinfo if item.addinfo
+                            else '-'}}</li>
                         {% endfor %}
 
                     </ul>
-                    <strong class="card-footer">{{'In the kitchen' if order.prepared == 0 else 'On its way to you' if order.delivered == 0 else 'Served'}}</strong>
+                    <strong class="card-footer">{{'In the kitchen' if order.prepared == 0 else 'On its way to you' if
+                        order.delivered == 0 else 'Served'}}</strong>
                 </div>
-                
+
                 {% endfor %}
-                
+
             </div>
         </section>
         <section class="tab-pane in" role="tabpanel" id="payment">
             <h3>Payment</h3>
             <div class="card card-deck py-4 px-3">
-                
+
                 {% for order in my_orders.values() %}
 
                 <div class="card bg-light text-primary p-3">
-                    <strong class="card-title">Order {{order.ordNum}}<br>Placed: {{order.date.strftime('%H:%M')}}</strong>
+                    <strong class="card-title">Order {{order.ordNum}}<br>Placed:
+                        {{order.date.strftime('%H:%M')}}</strong>
                     <ul class="card-body">
 
                         {% for item in order.items %}
-                            <li>{{item.name}}<br>&nbsp;&nbsp;{{'%.2f' % item.price}}&nbsp;&nbsp;&nbsp;&nbsp;x{{item.qty}}</li>
+                        <li>{{item.name}}<br>&nbsp;&nbsp;{{'%.2f' % item.price}}&nbsp;&nbsp;&nbsp;&nbsp;x{{item.qty}}
+                        </li>
                         {% endfor %}
 
                     </ul>
                     <strong class="card-footer">{{'Total: AED %.2f' % order.total()}}</strong>
 
                 </div>
-                
+
                 {% endfor %}
                 <div class="card bg-primary text-light p-3">
                     <strong class="card-title">Order Summary</strong>
                     <ul class="card-body">
 
                         {% for order in my_orders.values() %}
-                            <li>Order {{order.ordNum}}<br>&nbsp;&nbsp;<strong>{{'AED %.2f' % order.total()}}</strong></li>
+                        <li>Order {{order.ordNum}}<br>&nbsp;&nbsp;<strong>{{'AED %.2f' % order.total()}}</strong></li>
                         {% endfor %}
 
                     </ul>
                     <strong class="card-footer">Sub-total: {{'AED %.2f' % subtotal}}</strong>
                 </div>
-                
+
             </div>
             <br>
             <div class="text-center">
-                <a class="btn btn-primary text-light w-50" href="#" data-bs-toggle="modal" data-bs-target="#paymentMethod">Pay Now</a>
+                <a class="btn btn-primary text-light w-50" href="#" data-bs-toggle="modal"
+                    data-bs-target="#paymentMethod">Pay Now</a>
             </div>
         </section>
     </div>
@@ -259,16 +279,36 @@
 
 <script>
 
-    function requestPayment(){
-        document.getElementById("menuButton").disabled = true;
+    function requestPayment() {
+        function handle200(response) {
+            document.getElementById("payment").innerHTML =
+                `
+                <h3>Payment Complete</h3>
+                <div class="card card-deck py-4 px-3">
+                    <div class="card p-3">
+                    <strong class="card-title">Thank you for dining at Khidma!</strong>
+                    <div class="card-body">
+                        Transaction successful. Please show the QR code below to the staff, if they ask for payment confirmation:
+                        <br><br>
+                        <div style="text-align: center;">
+                        <img src="${response}">
+                        </div>
+                        <br><br>
+                        Leave us a review on <a href="https://www.youtube.com/watch?v=dQw4w9WgXcQ" target="_blank"><span class="material-icons align-middle">facebook</span></a>&nbsp;to get 10% off on your next visit!*
+                        <br>
+                        <div style="font-size:0.5em!important;">*T&C apply</div>
+                    </div>
+                    </div>
 
-        var xhr = new XMLHttpRequest();
-        xhr.open("POST", "/requestPayment", true);
-        xhr.onreadystatechange = function() {
-            if (this.readyState == 4 && this.status == 200) {
-                
-                    document.getElementById("payment").innerHTML =
-                    `
+
+                </div>
+            `;
+        }
+
+        function checkPage(callback) {
+            document.getElementById("menuButton").disabled = true;
+            document.getElementById("payment").innerHTML =
+                `
                     <h3>Payment</h3>
                     <div class="card card-deck py-4 px-3">
                         <div class="card p-3">
@@ -278,23 +318,95 @@
                         </div>
                         </div>
                     </div>
-                `;            
-            }
-        };
-        xhr.send();
+                `;
+            const xhr = new XMLHttpRequest(),
+                method = "POST";
 
+            xhr.open(method, '/requestPayment', true);
+
+            xhr.onreadystatechange = function () {
+
+                if (xhr.readyState == 4 && xhr.status == 200) {
+                    return callback(xhr.responseText);
+                }
+
+                else if (xhr.readyState == 4 && xhr.status == 401) {
+                    xhr.open(method, '/requestPayment', true);
+                    xhr.send();
+                }
+            }
+
+            // send the initial GET request
+            xhr.send();
+        }
+
+        checkPage(handle200);
     }
 
-    function pay(){
+    // function requestPayment() {
+    //     document.getElementById("menuButton").disabled = true;
+
+    //     var reload = setInterval(function () { if (sendCashPaymentPostRequest() == 200) { clearInterval(reload); } }, 2000)
+    // }
+
+    // function sendCashPaymentPostRequest() {
+    //     var xhr = new XMLHttpRequest();
+    //     xhr.open("POST", "/requestPayment", true);
+    //     xhr.onreadystatechange = function () {
+    //         if (this.readyState == 4 && this.status == 401) {
+
+    //             document.getElementById("payment").innerHTML =
+    //                 `
+    //                 <h3>Payment</h3>
+    //                 <div class="card card-deck py-4 px-3">
+    //                     <div class="card p-3">
+    //                     <strong class="card-title">Hang on, someone will be with you shortly!</strong>
+    //                     <div style="text-align: center;">
+    //                     <div class="loader" style="margin: 0 auto!important;"></div>
+    //                     </div>
+    //                     </div>
+    //                 </div>
+    //             `;
+    //         }
+    //         else if (this.readyState == 4 && this.status == 200) {
+    //             document.getElementById("payment").innerHTML =
+    //                 `
+    //             <h3>Payment Complete</h3>
+    //             <div class="card card-deck py-4 px-3">
+    //                 <div class="card p-3">
+    //                 <strong class="card-title">Thank you for dining at Khidma!</strong>
+    //                 <div class="card-body">
+    //                     Transaction successful. Please show the QR code below to the staff, if they ask for payment confirmation:
+    //                     <br><br>
+    //                     <div style="text-align: center;">
+    //                     <!--<img src="${this.responseText}">--><div>Served by ${this.responseText}</div>
+    //                     </div>
+    //                     <br><br>
+    //                     Leave us a review on <a href="https://www.youtube.com/watch?v=dQw4w9WgXcQ" target="_blank"><span class="material-icons align-middle">facebook</span></a>&nbsp;to get 10% off on your next visit!*
+    //                     <br>
+    //                     <div style="font-size:0.5em!important;">*T&C apply</div>
+    //                 </div>
+    //                 </div>
+
+
+    //             </div>
+    //         `;
+    //         }
+    //         return this.status
+    //     };
+    //     xhr.send();
+    // }
+
+    function pay() {
         // console.log('in pay');
         document.getElementById("menuButton").disabled = true;
         var xhr = new XMLHttpRequest();
         xhr.open("POST", "/pay", true);
-        xhr.onreadystatechange = function() {
+        xhr.onreadystatechange = function () {
             if (this.readyState == 4 && this.status == 200) {
-                
+
                 document.getElementById("payment").innerHTML =
-                `
+                    `
                 <h3>Payment Complete</h3>
                 <div class="card card-deck py-4 px-3">
                     <div class="card p-3">
@@ -321,8 +433,8 @@
     }
 
 
-    var intervalId = setInterval(function() {
-        $('#order_status').load(document.URL +  ' #order_status')
+    var intervalId = setInterval(function () {
+        $('#order_status').load(document.URL + ' #order_status')
     }, 2000);
 
     function inc(id) {
@@ -341,28 +453,28 @@
         while (true) {
             var ele = document.getElementById("m" + i);
             if (ele) {
-                data["m" + i] = {"qty": ele.innerHTML, "addinfo": document.getElementById("m" + i + "_add_info").value};
+                data["m" + i] = { "qty": ele.innerHTML, "addinfo": document.getElementById("m" + i + "_add_info").value };
                 ele.innerHTML = 0;
                 document.getElementById("m" + i + "_add_info").value = "";
             }
             else {
                 ele = document.getElementById("s" + i);
                 if (ele) {
-                    data["s" + i] = {"qty": ele.innerHTML, "addinfo": document.getElementById("s" + i + "_add_info").value};
+                    data["s" + i] = { "qty": ele.innerHTML, "addinfo": document.getElementById("s" + i + "_add_info").value };
                     ele.innerHTML = 0;
                     document.getElementById("s" + i + "_add_info").value = "";
                 }
                 else {
                     ele = document.getElementById("b" + i);
                     if (ele) {
-                        data["b" + i] = {"qty": ele.innerHTML, "addinfo": document.getElementById("b" + i + "_add_info").value};
+                        data["b" + i] = { "qty": ele.innerHTML, "addinfo": document.getElementById("b" + i + "_add_info").value };
                         ele.innerHTML = 0;
                         document.getElementById("b" + i + "_add_info").value = "";
                     }
                     else {
                         ele = document.getElementById("d" + i);
                         if (ele) {
-                            data["d" + i] = {"qty": ele.innerHTML, "addinfo": document.getElementById("d" + i + "_add_info").value};
+                            data["d" + i] = { "qty": ele.innerHTML, "addinfo": document.getElementById("d" + i + "_add_info").value };
                             ele.innerHTML = 0;
                             document.getElementById("d" + i + "_add_info").value = "";
                         }
@@ -385,30 +497,30 @@
         }
         // console.log(xhr.responseText);
 
-        setTimeout(function() {
-            $('#order_status').load(document.URL +  ' #order_status');
-            $('#payment').load(document.URL +  ' #payment'); // payments tab only needs to be updated whenever Place Order is clicked
+        setTimeout(function () {
+            $('#order_status').load(document.URL + ' #order_status');
+            $('#payment').load(document.URL + ' #payment'); // payments tab only needs to be updated whenever Place Order is clicked
         }, 500);
 
         $('.nav-tabs button[href="#order_status"]').tab('show'); // auto tab switch to order status
         // alert('done');
     }
 
-        // enable spacing for credit card number     
-    $('#number').on('keyup', function(e){         
-    var val = $(this).val();         
-    var newval = '';         
-    val = val.replace(/\s/g, ''); 
+    // enable spacing for credit card number
+    $('#number').on('keyup', function (e) {
+        var val = $(this).val();
+        var newval = '';
+        val = val.replace(/\s/g, '');
 
-    // iterate to letter-spacing after every 4 digits   
-    for(var i = 0; i < val.length; i++) {             
-        if(i%4 == 0 && i > 0) newval = newval.concat(' ');             
-        newval = newval.concat(val[i]);         
-    }        
+        // iterate to letter-spacing after every 4 digits
+        for (var i = 0; i < val.length; i++) {
+            if (i % 4 == 0 && i > 0) newval = newval.concat(' ');
+            newval = newval.concat(val[i]);
+        }
 
-    // format in same input field 
-    $(this).val(newval);     
-    }); 
+        // format in same input field
+        $(this).val(newval);
+    });
 
 </script>
 {% endblock content %}
