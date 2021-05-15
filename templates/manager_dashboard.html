@@ -140,6 +140,54 @@
 </div>
 
 
+<div class="modal fade" id="salesReportModal" tabindex="-1" aria-labelledby="salesReportModal">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div align="right">
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" ></button>
+            </div>
+            <div class="table-responsive">
+                <table class="table w-90">
+                    <thead class="table-light">
+                        <tr>
+                            <th class="text-center align-middle p-xl-3">Order Number</th>
+                            <th class="text-center align-middle p-xl-3">Item Name</th>
+                            <th class="text-center align-middle p-xl-3">Quantity</th>
+                            <th class="text-center align-middle p-xl-3">Total Cost</th>
+                        </tr>
+                    </thead>
+                    
+                    <tr>
+                        <td class="text-center align-middle p-xl-3">Num</td>
+                        <td class="text-center align-middle p-xl-3">Name</td>
+                        <td class="text-center align-middle p-xl-3">Quant</td>
+                        <td class="text-center align-middle p-xl-3">Cost</td>
+                    </tr>
+                </table>
+            </div>
+
+            <br>
+
+            <div class="table-responsive">
+                <table class="table w-90">
+                    <thead class="table-light">
+                        <tr>
+                            <th class="text-center align-middle p-xl-3">Order Number</th>
+                            <th class="text-center align-middle p-xl-3">Total Cost for Order</th>
+                        </tr>
+                    </thead>
+                    
+                    <tr>
+                        <td class="text-center align-middle p-xl-3">Num</td>
+                        <td class="text-center align-middle p-xl-3">Name</td>
+                    </tr>
+                </table>
+            </div>
+
+        </div>
+    </div>
+</div>
+
 
 
 <main class="dashboard">
@@ -254,7 +302,7 @@
                                 </a>
                             </td>
                             <td class="text-center align-middle p-xl-3">
-                                <a class="text-warning fw-bold" href="" data-bs-toggle="modal" onclick="showConfirmAvail({{ item.id }})"
+                                <a class="text-warning fw-bold" href="" data-bs-toggle="modal" onclick="showConfirmAvail('{{ item.id }}')"
                                         data-bs-target="#confirmAvailModal">
                                         <span class="material-icons align-middle">
                                             update
@@ -321,8 +369,18 @@
             <div class="card-header text-primary h5 p-3">Sales History</div>
             <div class="card-body">
                 <div class="card-deck">
-
+                    <div class="form-group col-lg-2">
+                        <input type="text" class="form-control" name="datefilter" value="" placeholder="Click here to select Date Range" />
+                    </div>
+                    
+                    <div class="text-center">
+                        <a href="#" data-bs-toggle="modal" data-bs-target="#salesReportModal"
+                            class="btn btn-primary">
+                            Generate Sales Report
+                        </a>
+                    </div>
                 </div>
+                <br>
                 <br>
                 <div class="card-deck">
 
@@ -429,6 +487,35 @@
         }, 500);
 
     }
+
+    function dateRangeSender(startDate,endDate, url) {
+        var xhr = new XMLHttpRequest();
+        var data = { "startDate": startDate,"endDate": endDate };
+        xhr.open("POST", url, true);
+        xhr.setRequestHeader('Content-Type', 'application/json');
+        xhr.send(JSON.stringify(data));
+        
+
+    }
+    $(function() {
+
+        $('input[name="datefilter"]').daterangepicker({
+            autoUpdateInput: false,
+            locale: {
+                cancelLabel: 'Clear'
+            }
+        });
+
+        $('input[name="datefilter"]').on('apply.daterangepicker', function(ev, picker) {
+            $(this).val(picker.startDate.format('DD/MM/YYYY') + ' - ' + picker.endDate.format('DD/MM/YYYY'));
+            dateRangeSender(picker.startDate.format('DD/MM/YYYY'),picker.endDate.format('DD/MM/YYYY'),'/salesHistory')
+        });
+
+        $('input[name="datefilter"]').on('cancel.daterangepicker', function(ev, picker) {
+            $(this).val('');
+        });
+
+    });
 
 
 

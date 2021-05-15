@@ -513,3 +513,33 @@ def changePassword():
         return 'success', 200
     else:
         return 'fail', 401
+
+@app.route("/salesHistory", methods = ['GET','POST'])
+def salesHistory():
+    startDate = str(request.json['startDate'])
+    endDate = str(request.json['endDate'])   
+    connection = cx_Oracle.connect("b00079866/b00079866@coeoracle.aus.edu:1521/orcl")
+    cur = connection.cursor()
+    orders = list(cur.execute(f"select ordernum from rorders where o_date between TO_DATE('{startDate}', 'dd/mm/yyyy') and TO_DATE('{endDate}', 'dd/mm/yyyy')"))
+    print("Orders=" , orders)
+    cur = connection.cursor()
+    orderDetails = list(cur.execute("select ordernum, itemid, qty from rorderdetails"))
+    print("orderDetails=" , orderDetails)
+    cur = connection.cursor()
+    menu = list(cur.execute("select itemid, name, price from rmenu"))
+    print("menu=" , menu)
+ 
+    sales=[]
+    for item in orders:
+        for details in orderDetails:
+            if item[0]==details[0]:
+                for menuItem in menu:
+                    if details[1]==menuItem[0]:
+                        sales.append((item[0],menuItem[1],details[2],details[2]*menuItem[2]))            
+    totals = []
+    for item in orders:
+        total = sum([x[3] for x in sales if x[0]==item[0]])
+        totals.append([item[0],total])
+    
+
+    return 'success'
