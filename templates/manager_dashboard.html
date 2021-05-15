@@ -140,54 +140,6 @@
 </div>
 
 
-<div class="modal fade" id="salesReportModal" tabindex="-1" aria-labelledby="salesReportModal">
-    <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content">
-            <div align="right">
-            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" ></button>
-            </div>
-            <div class="table-responsive">
-                <table class="table w-90">
-                    <thead class="table-light">
-                        <tr>
-                            <th class="text-center align-middle p-xl-3">Order Number</th>
-                            <th class="text-center align-middle p-xl-3">Item Name</th>
-                            <th class="text-center align-middle p-xl-3">Quantity</th>
-                            <th class="text-center align-middle p-xl-3">Total Cost</th>
-                        </tr>
-                    </thead>
-                    
-                    <tr>
-                        <td class="text-center align-middle p-xl-3">Num</td>
-                        <td class="text-center align-middle p-xl-3">Name</td>
-                        <td class="text-center align-middle p-xl-3">Quant</td>
-                        <td class="text-center align-middle p-xl-3">Cost</td>
-                    </tr>
-                </table>
-            </div>
-
-            <br>
-
-            <div class="table-responsive">
-                <table class="table w-90">
-                    <thead class="table-light">
-                        <tr>
-                            <th class="text-center align-middle p-xl-3">Order Number</th>
-                            <th class="text-center align-middle p-xl-3">Total Cost for Order</th>
-                        </tr>
-                    </thead>
-                    
-                    <tr>
-                        <td class="text-center align-middle p-xl-3">Num</td>
-                        <td class="text-center align-middle p-xl-3">Name</td>
-                    </tr>
-                </table>
-            </div>
-
-        </div>
-    </div>
-</div>
-
 
 
 <main class="dashboard">
@@ -369,26 +321,25 @@
             <div class="card-header text-primary h5 p-3">Sales History</div>
             <div class="card-body">
                 <div class="card-deck">
-                    <div class="form-group col-lg-2">
-                        <input type="text" class="form-control" name="datefilter" value="" placeholder="Click here to select Date Range" />
-                    </div>
-                    
-                    <div class="text-center">
-                        <a href="#" data-bs-toggle="modal" data-bs-target="#salesReportModal"
-                            class="btn btn-primary">
-                            Generate Sales Report
-                        </a>
+                    <div class="row g-3 align-items-center">
+                        <div class="col-auto">
+                            <label for="" class="">Select Date Range: </label>
+                        </div>
+                        <div class="col-auto">
+                            <input type="text" class="form-control" name="datefilter" value="" placeholder="Click here to select Date Range" />
+                        </div>
                     </div>
                 </div>
                 <br>
                 <br>
                 <div class="card-deck">
-
+                    <div class="table-responsive">
+                        <p  id="showData"></p>
+                    </div>
+                
                 </div>
             </div>
         </div>
-
-
 
     </div>
 </main>
@@ -493,8 +444,17 @@
         var data = { "startDate": startDate,"endDate": endDate };
         xhr.open("POST", url, true);
         xhr.setRequestHeader('Content-Type', 'application/json');
-        xhr.send(JSON.stringify(data));
         
+        xhr.onreadystatechange = function () {
+            if (this.readyState == 4 && this.status == 200) {
+                CreateTableFromJSON(JSON.parse(this.responseText))
+
+            }
+        };
+       
+        xhr.send(JSON.stringify(data));
+       
+  
 
     }
     $(function() {
@@ -517,7 +477,52 @@
 
     });
 
+    function CreateTableFromJSON(data) {
+        var myBooks = data
+        // EXTRACT VALUE FOR HTML HEADER. 
+        // ('Book ID', 'Book Name', 'Category' and 'Price')
+        var col = [];
+        for (var i = 0; i < myBooks.length; i++) {
+            for (var key in myBooks[i]) {
+                if (col.indexOf(key) === -1) {
+                    col.push(key);
+                }
+            }
+        }
 
+        // CREATE DYNAMIC TABLE.
+        var table = document.createElement("table") ;
+        table.className = "table w-100";
+        // CREATE HTML TABLE HEADER ROW USING THE EXTRACTED HEADERS ABOVE.
+
+        var tr = table.insertRow(-1);                   // TABLE ROW.
+
+        for (var i = 0; i < col.length; i++) {
+            var th = document.createElement("th");      // TABLE HEADER.
+            th.innerHTML = col[i];
+            tr.appendChild(th);
+        }
+
+        // ADD JSON DATA TO THE TABLE AS ROWS.
+        for (var i = 0; i < myBooks.length; i++) {
+
+            tr = table.insertRow(-1);
+
+            for (var j = 0; j < col.length; j++) {
+                var tabCell = tr.insertCell(-1);
+                tabCell.innerHTML = myBooks[i][col[j]];
+            }
+        }
+
+        // FINALLY ADD THE NEWLY CREATED TABLE WITH JSON DATA TO A CONTAINER.
+
+
+        var divContainer = document.getElementById("showData");
+        divContainer.innerHTML = "";
+        divContainer.appendChild(table);
+    }
 
 </script>
+
+
 {% endblock content %}

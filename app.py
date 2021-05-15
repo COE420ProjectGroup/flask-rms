@@ -5,6 +5,7 @@ from os import urandom
 from datetime import datetime as dt
 import urllib
 import requests
+import json
 
 sessions = {}
 app = Flask(__name__)
@@ -514,7 +515,7 @@ def changePassword():
     else:
         return 'fail', 401
 
-@app.route("/salesHistory", methods = ['GET','POST'])
+@app.route("/salesHistory", methods = ['POST'])
 def salesHistory():
     startDate = str(request.json['startDate'])
     endDate = str(request.json['endDate'])   
@@ -536,10 +537,22 @@ def salesHistory():
                 for menuItem in menu:
                     if details[1]==menuItem[0]:
                         sales.append((item[0],menuItem[1],details[2],details[2]*menuItem[2]))            
-    totals = []
+    '''totals = []
     for item in orders:
         total = sum([x[3] for x in sales if x[0]==item[0]])
         totals.append([item[0],total])
+    totals = {}
+    for item in orders:
+        total = sum([x[3] for x in sales if x[0]==item[0]])
+        totals[item[0]]=total'''
+    sales=[]
+    for item in orders:
+        for details in orderDetails:
+            if item[0]==details[0]:
+                for menuItem in menu:
+                    if details[1]==menuItem[0]:
+                        dic = {'Order Number' : item[0],'Item Name' : menuItem[1], 'Quantity' : details[2], 'Total Cost' : details[2]*menuItem[2] }
+                        sales.append(dic)
     
 
-    return 'success'
+    return json.dumps(sales)
