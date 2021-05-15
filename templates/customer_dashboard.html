@@ -19,7 +19,7 @@
                 </div>
                 <br>
                 <div class="text-center">
-                    <a type="button" class="btn btn-light text-primary w-50" data-bs-dismiss="modal" onclick="alert('cash')"><span class="material-icons align-middle">payments</span>&nbsp;Cash</a>
+                    <a type="button" class="btn btn-light text-primary w-50" data-bs-dismiss="modal" onclick="requestPayment()"><span class="material-icons align-middle">payments</span>&nbsp;Cash</a>
                 </div>
                 <br>
                 
@@ -258,6 +258,32 @@
 </main>
 
 <script>
+
+    function requestPayment(){
+        document.getElementById("menuButton").disabled = true;
+
+        var xhr = new XMLHttpRequest();
+        xhr.open("POST", "/requestPayment", true);
+        xhr.onreadystatechange = function() {
+            if (this.readyState == 4 && this.status == 200) {
+                
+                    document.getElementById("payment").innerHTML =
+                    `
+                    <h3>Payment</h3>
+                    <div class="card card-deck py-4 px-3">
+                        <div class="card p-3">
+                        <strong class="card-title">Hang on, someone will be with you shortly!</strong>
+                        <div style="text-align: center;">
+                        <div class="loader" style="margin: 0 auto!important;"></div>
+                        </div>
+                        </div>
+                    </div>
+                `;            
+            }
+        };
+        xhr.send();
+
+    }
 
     function pay(){
         // console.log('in pay');

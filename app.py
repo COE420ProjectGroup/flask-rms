@@ -162,7 +162,10 @@ def dashboard():
         cur = connection.cursor()
         res = cur.execute("select tablecode from rcustomer where tablecode is not null and paymentCompletedBy is NULL")
         bookedTables = [r[0] for r in res]
-        return render_template("waiter_dashboard.html", user=emp, bookedTables=bookedTables, prep_orders=prep_orders, my_orders=my_orders)
+        cur = connection.cursor()
+        res = cur.execute("select tablecode from rcustomer where tablecode is not null and paymentCompletedBy is NULL and paymentRequested=1")
+        payReq = [r[0] for r in res]
+        return render_template("waiter_dashboard.html", user=emp, bookedTables=bookedTables, prep_orders=prep_orders, my_orders=my_orders, payReq=payReq)
     elif emp.type == 2:
         connection = cx_Oracle.connect("b00079866/b00079866@coeoracle.aus.edu:1521/orcl")
         cur = connection.cursor()
@@ -318,6 +321,22 @@ def place():
     #print(request.json, request.cookies)
     return 'success'
 
+@app.route("/requestPayment", methods = ['POST'])
+def requestPayment():
+    global sessions
+    if getType(request.cookies) != 3:
+        return redirect(url_for('index'))
+
+    custID = sessions[request.cookies['sessionID']].custID
+    connection = cx_Oracle.connect("b00079866/b00079866@coeoracle.aus.edu:1521/orcl")
+    cur = connection.cursor()
+    res = cur.execute(f"update rcustomer set paymentRequested=1 where custID = {custID}")
+    connection.commit()
+    cur = connection.cursor()
+    res = cur.execute(f"select fname from remployeeaccounts where username in (select paymentCompletedBy from rcustomer where custID = {custID})")
+    waiter = list(res)[0][0] if list(res) else None
+
+    return waiter if waiter else 'None'
 
 @app.route("/pay", methods = ['POST'])
 def pay():
@@ -391,6 +410,21 @@ def deliver():
     connection = cx_Oracle.connect("b00079866/b00079866@coeoracle.aus.edu:1521/orcl")
     cur = connection.cursor()
     res = cur.execute(f"update rorders set delivered = 1 where orderNum={orderNum}")
+    connection.commit()
+    return 'success'
+
+@app.route("/attend", methods = ['POST'])
+def attend():
+    global sessions
+    if getType(request.cookies) != 1:
+        return redirect(url_for('index'))
+    
+    #print(request.json)
+    waiterUsername = sessions[request.cookies['sessionID']].username
+    tableCode = int(request.json['tableCode'])
+    connection = cx_Oracle.connect("b00079866/b00079866@coeoracle.aus.edu:1521/orcl")
+    cur = connection.cursor()
+    res = cur.execute(f"update rcustomer set paymentCompletedBy = '{waiterUsername}' where tableCode = {tableCode} and paymentCompletedBy is NULL and paymentRequested = 1")
     connection.commit()
     return 'success'
 

@@ -79,6 +79,9 @@
                     <div class="card bg-primary text-light p-3">
                         <strong class="card-title">Table {{i}}</strong>
                         <p>Booked</p>
+                        {% if i in payReq %}
+                        <a href="javascript:attend({{i}});" data-bs-toggle="tooltip" title="Cash payment requested"><span class="material-icons align-middle" style="color: white;">payments</span></a>
+                        {% endif %}
                     </div>
                     {% else %}
                     <div class="card bg-light text-primary p-3">
@@ -96,6 +99,9 @@
                     <div class="card bg-primary text-light p-3">
                         <strong class="card-title">Table {{i}}</strong>
                         <p>Booked</p>
+                        {% if i in payReq %}
+                        <a href="javascript:attend({{i}});" data-bs-toggle="tooltip" title="Cash payment requested"><span class="material-icons align-middle" style="color: white;">payments</span></a>
+                        {% endif %}
                     </div>
                     {% else %}
                     <div class="card bg-light text-primary p-3">
@@ -130,8 +136,20 @@
         setTimeout(function () {
             $('#orders').load(document.URL + ' #orders');
         }, 500);
+    }
+
+    function attend(tableCode){
+        var xhr = new XMLHttpRequest();
+        var data = { "tableCode": tableCode };
+
+        xhr.open("POST", "/attend", true);
+        xhr.setRequestHeader('Content-Type', 'application/json');
+        xhr.send(JSON.stringify(data));
 
 
+        setTimeout(function () {
+            $('#tables').load(document.URL + ' #tables');
+        }, 500);
     }
 
 </script>
