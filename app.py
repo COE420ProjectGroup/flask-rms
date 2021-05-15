@@ -4,6 +4,7 @@ import cx_Oracle
 from os import urandom
 from datetime import datetime as dt
 import urllib
+import requests
 
 sessions = {}
 app = Flask(__name__)
@@ -135,7 +136,10 @@ def dashboard():
         cur = connection.cursor()
         res = cur.execute("select tablecode from rcustomer where tablecode is not null and paymentCompletedBy is NULL")
         bookedTables = [r[0] for r in res]
-        return render_template("manager_dashboard.html", user=emp, employeeAccounts=employeeAccounts, bookedTables=bookedTables)
+        cur = connection.cursor()
+        res = cur.execute("select * from rmenu")
+        menu = [MenuItem(*i) for i in res]
+        return render_template("manager_dashboard.html", user=emp, employeeAccounts=employeeAccounts, bookedTables=bookedTables, menu=menu)
     elif emp.type == 1:
         connection = cx_Oracle.connect("b00079866/b00079866@coeoracle.aus.edu:1521/orcl")
         cur = connection.cursor()
@@ -342,6 +346,7 @@ def requestPayment():
     qrdata = f"{{'custID': '{custID}', 'confirmationCode': 'YupTheyReallyPaid',  'source': 'Just ask {waiter}'}}" if waiter else None
     return (f"https://api.qrserver.com/v1/create-qr-code/?size=250x250&data={urllib.parse.quote_plus(qrdata)}&color=7f0fff", 200) if waiter else ('None', 401)
 
+
 @app.route("/pay", methods = ['POST'])
 def pay():
     global sessions
@@ -452,6 +457,41 @@ def delEmployee():
     connection = cx_Oracle.connect("b00079866/b00079866@coeoracle.aus.edu:1521/orcl")
     cur = connection.cursor()
     res = cur.execute(f"delete from remployeeaccounts where username='{username}'")
+    connection.commit()
+    return 'success'
+
+@app.route("/updateMenu", methods = ['POST'])
+def updateMenu():
+    itemID = int(request.json['itemID'])
+    desc = request.json['desc']
+    price = float(request.json['price'])
+    avail = int(request.json['avail'])
+    connection = cx_Oracle.connect("b00079866/b00079866@coeoracle.aus.edu:1521/orcl")
+    cur = connection.cursor()
+    res = cur.execute(f"update rmenu set descr = '{desc}', price = {price}, avail = {avail}  where itemID = {itemID}")
+    connection.commit()
+    return 'success'
+
+@app.route("/addMenuItem", methods = ['POST'])
+def addMenuItem():
+    name = request.json['name']
+    desc = request.json['desc']
+    itemType = request.json['itemType'][0].lower()
+    price = float(request.json['price'])
+    avail = 1
+    connection = cx_Oracle.connect("b00079866/b00079866@coeoracle.aus.edu:1521/orcl")
+    cur = connection.cursor()
+    res = cur.execute(f"select max(itemid) from rmenu")
+    itemID = int(list(res)[0][0]) + 1
+
+    imgurl = request.json['imgurl']
+    resp = requests.get(imgurl)
+    f = open("static/images/"+name+".jpg", "wb")
+    f.write(resp.content)
+    f.close()
+
+    cur = connection.cursor()
+    res = cur.execute(f"insert into rmenu values({itemID}, '{name}', '{desc}', {price}, '{itemType}', {avail} )")
     connection.commit()
     return 'success'
 

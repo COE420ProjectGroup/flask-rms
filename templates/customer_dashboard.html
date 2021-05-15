@@ -435,6 +435,7 @@
 
     var intervalId = setInterval(function () {
         $('#order_status').load(document.URL + ' #order_status')
+        // $('#featured').load(document.URL + ' #featured') // I want to do this to show menu changes in real time, but it resets current selections
     }, 2000);
 
     function inc(id) {
@@ -487,7 +488,7 @@
             i = i + 1;
         }
 
-        // console.log(JSON.stringify(data));
+        console.log(JSON.stringify(data));
 
         xhr.open("POST", "/place", true);
         xhr.setRequestHeader('Content-Type', 'application/json');
