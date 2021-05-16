@@ -26,7 +26,6 @@
                     <a class="nav-link{% if request.endpoint == 'index' %} active{% endif %}" aria-current="page"
                         href="{{ url_for('index') }}">Home</a>
                     <a class="nav-link" href="{{ url_for('index') }}#about">About</a>
-                    <a class="nav-link" href="{{ url_for('index') }}#featured">Featured</a>
                     <a class="nav-link{% if request.endpoint == 'login' or request.endpoint == 'register' %} active{% endif %}"
                         href="{{ url_for('login') }}">Login</a>
                 </div>
