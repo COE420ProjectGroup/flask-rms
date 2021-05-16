@@ -166,13 +166,11 @@
                                     <p class="card-text">{{ item.desc }}</p>
                                     <div class="btn-group w-100 mt-auto" role="group">
                                         <a onclick="dec('{{ item.type }}{{ item.id }}');" type="button"
-                                            class="btn btn-danger text-light" type="button"><span
-                                                class="material-icons">remove</span></a>
+                                            class="btn btn-danger text-light" type="button"><span class="material-icons">remove</span></a>
                                         <a class="btn p-0 fs-3" id="{{ item.type }}{{ item.id }}">0</a>
                                         <div class="btn-group flex-grow-1" type="button">
                                             <a class="btn btn-primary text-light flex-grow-1" type="button"
-                                                onclick="inc('{{ item.type }}{{ item.id }}');"><span
-                                                    class="material-icons">add</span></a>
+                                                onclick="inc('{{ item.type }}{{ item.id }}');"><span class="material-icons">add</span></a>
                                             <button type="button"
                                                 class="btn btn-primary text-light dropdown-toggle dropdown-toggle-split"
                                                 id="dropdownMenuReference" data-bs-toggle="dropdown"
@@ -331,7 +329,7 @@
                 }
 
                 else if (xhr.readyState == 4 && xhr.status == 401) {
-                    await new Promise(r => setTimeout(r, 2000));
+                    //await new Promise(r => setTimeout(r, 2000));
                     xhr.open(method, '/requestPayment', true);
                     xhr.send();
                 }
