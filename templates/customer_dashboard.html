@@ -44,7 +44,7 @@
                 <form method="POST" id=ccform>
                     <div class="col-md">
                         <label for="name" class="form-label">Name on card</label>
-                        <input type="text" class="form-control" id="name" placeholder="John Smith" name="name"
+                        <input type="text" class="form-control" id="name" placeholder="Full Name" name="name"
                             value="{{user.fname+' '+user.lname}}" required>
                     </div>
                     <div class="col-md">
@@ -105,6 +105,14 @@
             <!-- <img src="{{ url_for('static', filename='images/menu.jpg') }}" alt="" class="d-none d-xl-block col-xl-4"> -->
 
             <div class="p-5">
+                <span style="float: right;">
+                    <button type="button" class="btn btn-primary" data-bs-toggle="popover" title="How to order" 
+                    data-bs-content="Click on the + button to add item to order and - button to remove.
+                     If you want to customize your order you can click on the down arrow next to the + button. 
+                     Click on Place order to place order.">
+                    Help!
+                    </button>
+                </span>
                 <h2>Menu</h2>
                 <p>
                    All our ingredients are organic and locally sourced. You can order knowing that
@@ -232,6 +240,13 @@
             </div>
         </section>
         <section class="tab-pane in" role="tabpanel" id="payment">
+            <span style="float: right;">
+                <button type="button" class="btn btn-primary" data-bs-toggle="popover" title="How to pay?" 
+                data-bs-content="Click on Pay Now button. You can select Card and enter your credit card details. Or 
+                you can select Cash and a waiter will come collect the payment from you.">
+                Help!
+                </button>
+            </span>
             <h3>Payment</h3>
             <div class="card card-deck py-4 px-3">
 
@@ -274,7 +289,12 @@
         </section>
     </div>
 </main>
-
+<script type="text/javascript">
+    var popoverTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="popover"]'))
+    var popoverList = popoverTriggerList.map(function (popoverTriggerEl) {
+    return new bootstrap.Popover(popoverTriggerEl)
+    })
+</script>
 <script>
 
     function requestPayment() {
