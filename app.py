@@ -275,7 +275,7 @@ def login():
         resp.set_cookie('sessionID', sessID)
         return resp
     else:
-        return 'pls no hax'
+        return render_template("login.html", show_incorrect_modal=True)
 
 
 @app.route("/logout", methods = ['GET'])
