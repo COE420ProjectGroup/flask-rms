@@ -149,10 +149,19 @@ def dashboard():
         "and det.itemid = mn.itemid "
         "group by ord.o_date")
         res = cur.execute(query)
-        saleshistory = dict([(date.strftime("%d %B, %Y"), amount) for date, amount in list(res)])
+        res=list(res)
+        saleshistory = {}
+        for r in res:
+            saleshistory[r[0].strftime("%d %B, %Y")] = 0 
+        for r in res:
+	        saleshistory[r[0].strftime("%d %B, %Y")]+=float(r[1])
+        #saleshistory = dict([(date.strftime("%d %B, %Y"), amount) for date, amount in list(res)])
+        print("SALES HIST : ",saleshistory)
         dates = [(dt.today() - datetime.timedelta(days = day)).strftime("%d %B, %Y") for day in range(7)][::-1]
+        print("dates :", dates)
         # datevalueavailable = [date for date, s in saleshistory]
         sales = [saleshistory[d] if d in saleshistory.keys() else 0 for d in dates]
+        print("SALES :", sales)
         graphs = dict(
             data=[
                 dict(
