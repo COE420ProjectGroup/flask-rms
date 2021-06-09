@@ -8,6 +8,7 @@ import urllib
 import requests
 import json
 import plotly
+from dbcreds import DB_USERNAME, DB_PASSWORD
 
 sessions = {}
 app = Flask(__name__)
@@ -92,7 +93,7 @@ def customer():
             return resp
     else:
         return redirect(url_for('register'))
-    connection = cx_Oracle.connect("b00079866/b00079866@coeoracle.aus.edu:1521/orcl")
+    connection = cx_Oracle.connect(f"{DB_USERNAME}/{DB_PASSWORD}@coeoracle.aus.edu:1521/orcl")
     cur = connection.cursor()
     res = cur.execute("select * from rmenu where avail = 1 order by type desc")
     items = [MenuItem(*i) for i in res]
@@ -132,7 +133,7 @@ def dashboard():
     else:
         return redirect(url_for('login'))
     if emp.type == 0:
-        connection = cx_Oracle.connect("b00079866/b00079866@coeoracle.aus.edu:1521/orcl")
+        connection = cx_Oracle.connect(f"{DB_USERNAME}/{DB_PASSWORD}@coeoracle.aus.edu:1521/orcl")
         cur = connection.cursor()
         employeeAccounts = cur.execute("select fname, lname, username, email, type from remployeeaccounts")
         employeeAccounts = list(employeeAccounts)
@@ -183,7 +184,7 @@ def dashboard():
         ordered = dict(res)
         return render_template("manager_dashboard.html", user=emp, employeeAccounts=employeeAccounts, bookedTables=bookedTables,menu=menu, todaysales=sales[-1], graphJSON=graphJSON, todayorders=todayorders, mostordered=max(ordered, key=ordered.get))
     elif emp.type == 1:
-        connection = cx_Oracle.connect("b00079866/b00079866@coeoracle.aus.edu:1521/orcl")
+        connection = cx_Oracle.connect(f"{DB_USERNAME}/{DB_PASSWORD}@coeoracle.aus.edu:1521/orcl")
         cur = connection.cursor()
         res = cur.execute("select rorders.ordernum, name, qty, addinfo, o_date from rorders, rorderdetails, rmenu where rorders.ordernum=rorderdetails.ordernum AND rorderdetails.itemid=rmenu.itemid AND placed = 1 AND prepared = 1  AND delivered = 0  AND waiter_picked_up is NULL order by o_date")
         res = list(res)
@@ -213,7 +214,7 @@ def dashboard():
         payReq = [r[0] for r in res]
         return render_template("waiter_dashboard.html", user=emp, bookedTables=bookedTables, prep_orders=prep_orders, my_orders=my_orders, payReq=payReq)
     elif emp.type == 2:
-        connection = cx_Oracle.connect("b00079866/b00079866@coeoracle.aus.edu:1521/orcl")
+        connection = cx_Oracle.connect(f"{DB_USERNAME}/{DB_PASSWORD}@coeoracle.aus.edu:1521/orcl")
         cur = connection.cursor()
         res = cur.execute("select rorders.ordernum, name, qty, addinfo, o_date from rorders, rorderdetails, rmenu where rorders.ordernum=rorderdetails.ordernum AND rorderdetails.itemid=rmenu.itemid AND placed = 1 AND prepared = 0  AND delivered = 0  AND chef_picked_up is NULL order by o_date")
         res = list(res)
@@ -271,7 +272,7 @@ def login():
     # else: request.method=='POST'
     user = request.form['user']
     pwd = md5(request.form['pass'].encode()).hexdigest()
-    connection = cx_Oracle.connect("b00079866/b00079866@coeoracle.aus.edu:1521/orcl")
+    connection = cx_Oracle.connect(f"{DB_USERNAME}/{DB_PASSWORD}@coeoracle.aus.edu:1521/orcl")
     cur = connection.cursor()
     res = cur.execute("select Fname, Lname, username, type from REmployeeAccounts where username='{}' and password='{}'".format(user, pwd))
     res = [row for row in res]
@@ -300,7 +301,7 @@ def logout():
 
 @app.route('/register', methods = ['GET', 'POST'])
 def register():
-    connection = cx_Oracle.connect("b00079866/b00079866@coeoracle.aus.edu:1521/orcl")
+    connection = cx_Oracle.connect(f"{DB_USERNAME}/{DB_PASSWORD}@coeoracle.aus.edu:1521/orcl")
     cur = connection.cursor()
     res = cur.execute("select tablecode from rcustomer where tablecode is not null and paymentCompletedBy is NULL")
     bookedTables = [r[0] for r in res]
@@ -347,7 +348,7 @@ def place():
     if getType(request.cookies) != 3:
         return redirect(url_for('index'))
     custID = sessions[request.cookies['sessionID']].custID
-    connection = cx_Oracle.connect("b00079866/b00079866@coeoracle.aus.edu:1521/orcl")
+    connection = cx_Oracle.connect(f"{DB_USERNAME}/{DB_PASSWORD}@coeoracle.aus.edu:1521/orcl")
     cur = connection.cursor()
     res = cur.execute("select max(orderNum) from rorders")
     ordnum = int(list(res)[0][0]) + 1 # incr ordNum
@@ -374,7 +375,7 @@ def requestPayment():
         return redirect(url_for('index'))
 
     custID = sessions[request.cookies['sessionID']].custID
-    connection = cx_Oracle.connect("b00079866/b00079866@coeoracle.aus.edu:1521/orcl")
+    connection = cx_Oracle.connect(f"{DB_USERNAME}/{DB_PASSWORD}@coeoracle.aus.edu:1521/orcl")
     cur = connection.cursor()
     res = cur.execute(f"update rcustomer set paymentRequested=1 where custID = {custID}")
     connection.commit()
@@ -396,7 +397,7 @@ def pay():
         return redirect(url_for('index'))
 
     custID = sessions[request.cookies['sessionID']].custID
-    connection = cx_Oracle.connect("b00079866/b00079866@coeoracle.aus.edu:1521/orcl")
+    connection = cx_Oracle.connect(f"{DB_USERNAME}/{DB_PASSWORD}@coeoracle.aus.edu:1521/orcl")
     cur = connection.cursor()
     res = cur.execute(f"update rcustomer set paymentCompletedBy = 'm1' where custID = {custID}") # pay by cc -> completed by manager
     connection.commit()
@@ -412,7 +413,7 @@ def prepare():
     chefUsername = sessions[request.cookies['sessionID']].username
     #print(request.json)
     orderNum = int(request.json['ordNum'])
-    connection = cx_Oracle.connect("b00079866/b00079866@coeoracle.aus.edu:1521/orcl")
+    connection = cx_Oracle.connect(f"{DB_USERNAME}/{DB_PASSWORD}@coeoracle.aus.edu:1521/orcl")
     cur = connection.cursor()
     res = cur.execute(f"update rorders set chef_picked_up = '{chefUsername}' where orderNum={orderNum}")
     connection.commit()
@@ -427,7 +428,7 @@ def complete():
     
     #print(request.json)
     orderNum = int(request.json['ordNum'])
-    connection = cx_Oracle.connect("b00079866/b00079866@coeoracle.aus.edu:1521/orcl")
+    connection = cx_Oracle.connect(f"{DB_USERNAME}/{DB_PASSWORD}@coeoracle.aus.edu:1521/orcl")
     cur = connection.cursor()
     res = cur.execute(f"update rorders set prepared = 1 where orderNum={orderNum}")
     #print(len(res))
@@ -444,7 +445,7 @@ def collect():
     waiterUsername = sessions[request.cookies['sessionID']].username
     print(request.json)
     orderNum = int(request.json['ordNum'])
-    connection = cx_Oracle.connect("b00079866/b00079866@coeoracle.aus.edu:1521/orcl")
+    connection = cx_Oracle.connect(f"{DB_USERNAME}/{DB_PASSWORD}@coeoracle.aus.edu:1521/orcl")
     cur = connection.cursor()
     res = cur.execute(f"update rorders set waiter_picked_up = '{waiterUsername}' where orderNum={orderNum}")
     connection.commit()
@@ -458,7 +459,7 @@ def deliver():
     
     #print(request.json)
     orderNum = int(request.json['ordNum'])
-    connection = cx_Oracle.connect("b00079866/b00079866@coeoracle.aus.edu:1521/orcl")
+    connection = cx_Oracle.connect(f"{DB_USERNAME}/{DB_PASSWORD}@coeoracle.aus.edu:1521/orcl")
     cur = connection.cursor()
     res = cur.execute(f"update rorders set delivered = 1 where orderNum={orderNum}")
     connection.commit()
@@ -473,7 +474,7 @@ def attend():
     #print(request.json)
     waiterUsername = sessions[request.cookies['sessionID']].username
     tableCode = int(request.json['tableCode'])
-    connection = cx_Oracle.connect("b00079866/b00079866@coeoracle.aus.edu:1521/orcl")
+    connection = cx_Oracle.connect(f"{DB_USERNAME}/{DB_PASSWORD}@coeoracle.aus.edu:1521/orcl")
     cur = connection.cursor()
     res = cur.execute(f"update rcustomer set paymentCompletedBy = '{waiterUsername}' where tableCode = {tableCode} and paymentCompletedBy is NULL and paymentRequested = 1")
     connection.commit()
@@ -487,7 +488,7 @@ def addEmployee():
     pwd = md5(request.json['pwd'].encode()).hexdigest()
     email = request.json['email']
     userType = ["Manager", "Waiter", "Chef"].index(request.json['userType'])
-    connection = cx_Oracle.connect("b00079866/b00079866@coeoracle.aus.edu:1521/orcl")
+    connection = cx_Oracle.connect(f"{DB_USERNAME}/{DB_PASSWORD}@coeoracle.aus.edu:1521/orcl")
     cur = connection.cursor()
     res = cur.execute("insert into remployeeaccounts (fname, lname, username, password, email, type) values ('{}','{}','{}','{}','{}',{})".format(fname, lname, userName, pwd, email, userType))
     connection.commit()
@@ -496,7 +497,7 @@ def addEmployee():
 @app.route("/delEmployee", methods = ['POST'])
 def delEmployee():
     username = str(request.json['username'])
-    connection = cx_Oracle.connect("b00079866/b00079866@coeoracle.aus.edu:1521/orcl")
+    connection = cx_Oracle.connect(f"{DB_USERNAME}/{DB_PASSWORD}@coeoracle.aus.edu:1521/orcl")
     cur = connection.cursor()
     res = cur.execute(f"delete from remployeeaccounts where username='{username}'")
     connection.commit()
@@ -508,7 +509,7 @@ def updateMenu():
     desc = request.json['desc']
     price = float(request.json['price'])
     avail = int(request.json['avail'])
-    connection = cx_Oracle.connect("b00079866/b00079866@coeoracle.aus.edu:1521/orcl")
+    connection = cx_Oracle.connect(f"{DB_USERNAME}/{DB_PASSWORD}@coeoracle.aus.edu:1521/orcl")
     cur = connection.cursor()
     res = cur.execute(f"update rmenu set descr = '{desc}', price = {price}, avail = {avail}  where itemID = {itemID}")
     connection.commit()
@@ -521,7 +522,7 @@ def addMenuItem():
     itemType = request.json['itemType'][0].lower()
     price = float(request.json['price'])
     avail = 1
-    connection = cx_Oracle.connect("b00079866/b00079866@coeoracle.aus.edu:1521/orcl")
+    connection = cx_Oracle.connect(f"{DB_USERNAME}/{DB_PASSWORD}@coeoracle.aus.edu:1521/orcl")
     cur = connection.cursor()
     res = cur.execute(f"select max(itemid) from rmenu")
     itemID = int(list(res)[0][0]) + 1
@@ -544,7 +545,7 @@ def changePassword():
     hashed = md5(currpass.encode()).hexdigest()
     newpass = request.get_json()['newpwd']
     confpass = request.get_json()['confpwd']
-    connection = cx_Oracle.connect("b00079866/b00079866@coeoracle.aus.edu:1521/orcl")
+    connection = cx_Oracle.connect(f"{DB_USERNAME}/{DB_PASSWORD}@coeoracle.aus.edu:1521/orcl")
     cur = connection.cursor()
     res = cur.execute(f"select password from remployeeaccounts where username='{username}'")
     pwd = list(res)[0][0]
@@ -560,7 +561,7 @@ def changePassword():
 def salesHistory():
     startDate = str(request.json['startDate'])
     endDate = str(request.json['endDate'])   
-    connection = cx_Oracle.connect("b00079866/b00079866@coeoracle.aus.edu:1521/orcl")
+    connection = cx_Oracle.connect(f"{DB_USERNAME}/{DB_PASSWORD}@coeoracle.aus.edu:1521/orcl")
     cur = connection.cursor()
     orders = list(cur.execute(f"select ordernum from rorders where o_date between TO_DATE('{startDate}', 'dd/mm/yyyy') and TO_DATE('{endDate}', 'dd/mm/yyyy')"))
     print("Orders=" , orders)
