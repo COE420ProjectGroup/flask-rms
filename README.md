@@ -9,8 +9,14 @@ as well make the ordering process quicker and more efficient.
 
 ## Contributors
 
-<a href="https://github.com/COE420ProjectGroup/flask-rms/graphs/contributors">
-  <img src="https://contrib.rocks/image?repo=COE420ProjectGroup/flask-rms" />
+<a href="https://github.com/ashithfarhan">
+  <img src="https://github.com/ashithfarhan.png?" width="55">
+</a>
+<a href="https://github.com/farooq-aus">
+  <img src="https://github.com/farooq-aus.png?" width="55">
+</a>
+<a href="https://github.com/sabbir-al">
+  <img src="https://github.com/sabbir-al.png?" width="55">
 </a>
 
 ## Screenshots
