@@ -9,8 +9,8 @@ as well make the ordering process quicker and more efficient.
 
 ## Contributers
 
-<a href = "https://github.com/COE420ProjectGroup/flask-rms/">
-  <img src = "https://contrib.rocks/image?repo = COE420ProjectGroup/flask-rms/"/>
+<a href="https://github.com/COE420ProjectGroup/flask-rms/graphs/contributors">
+  <img src="https://contrib.rocks/image?repo=COE420ProjectGroup/flask-rms" />
 </a>
 
 ## Screenshots
