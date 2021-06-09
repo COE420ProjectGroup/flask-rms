@@ -7,7 +7,7 @@ the bill via their email, thereby minimizing person to person interaction. Such 
 relatively quick to implement within the restaurant, enhance the safety of the customers and staff 
 as well make the ordering process quicker and more efficient.
 
-## Contributers
+## Contributors
 
 <a href="https://github.com/COE420ProjectGroup/flask-rms/graphs/contributors">
   <img src="https://contrib.rocks/image?repo=COE420ProjectGroup/flask-rms" />
